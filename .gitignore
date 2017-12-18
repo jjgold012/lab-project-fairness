@@ -7,3 +7,4 @@
 *.iml
 out
 gen
+fairness_project/__pycache__/
