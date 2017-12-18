@@ -1,8 +1,8 @@
 import sys
-from csv import DictReader
 import json
-#from pprint import pprint
+from csv import DictReader
 from fairness_project.problem import FairnessProblem
+import fairness_project.solver as solve
 
 
 def process_line(filters, headers_integer_values, line):
@@ -18,14 +18,14 @@ def process_line(filters, headers_integer_values, line):
 
     return line_copy
 
-def main(option_file):
-    option = json.load(open(option_file))
-    data_file = open('./datasets/' + option['data_set'] + '/' + option['file'])
-    headers = option['data_headers']
-    protected = option['protected']
-    tag = option['tag']
-    filters = option['filters']
-    headers_integer_values = option['headers_integer_values']
+
+def load_problem(options):
+    data_file = open('./datasets/' + options['data_set'] + '/' + options['file'])
+    headers = options['data_headers']
+    protected = options['protected']
+    tag = options['tag']
+    filters = options['filters']
+    headers_integer_values = options['headers_integer_values']
 
     file_reader = DictReader(data_file)
 
@@ -38,7 +38,13 @@ def main(option_file):
             x.append([float(processed_line[h]) for h in headers])
             y.append(int(processed_line[tag]))
 
-    problem = FairnessProblem(option['description'], x, y, protected_index)
+    return FairnessProblem(options['description'], x, y, protected_index)
+
+
+def main(options_file):
+    options = json.load(open(options_file))
+    problem = load_problem(options)
+    solve.fairness(problem)
 
 
 if __name__ == "__main__":
