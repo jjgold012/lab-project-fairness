@@ -3,7 +3,7 @@
   "data_set":     "compas-dataset",
   "file":         "compas-scores-two-years.csv",
   "data_headers":
-  ["age","sex","race","priors_count","c_charge_degree","is_recid"],
+  ["age","sex","race","priors_count","c_charge_degree"],
   "protected":    "race",
   "tag":          "is_recid",
 

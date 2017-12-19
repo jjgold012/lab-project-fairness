@@ -1,6 +1,5 @@
 import cvxpy as cvx
 import numpy as np
-import matplotlib.pyplot as plt
 from fairness_project.problem import FairnessProblem
 
 
@@ -8,13 +7,22 @@ def fairness(problem: FairnessProblem):
     x = problem.X
     y = problem.Y
     w = cvx.Variable(x.shape[1], 1)
+    gamma = 0.1
 
     loss = -(y.T*(x*w) - cvx.sum_entries(cvx.logistic(x*w)))
+
     regularize_fpr =\
         problem.fp_weight*cvx.abs(((np.sum(problem.X_0_neg, axis=0)/problem.X_0_neg.shape[0]) - (np.sum(problem.X_1_neg, axis=0)/problem.X_1_neg.shape[0]))*w)
+
     regularize_fnr =\
         problem.fn_weight*cvx.abs(((np.sum(problem.X_1_pos, axis=0)/problem.X_1_pos.shape[0]) - (np.sum(problem.X_0_pos, axis=0)/problem.X_0_pos.shape[0]))*w)
 
+    regularize_w = gamma*cvx.sum_squares(w)
+
+    objective = cvx.Minimize(loss + regularize_fnr + regularize_fpr + regularize_w)
+    p = cvx.Problem(objective)
+    res = p.solve(verbose=True)
+    print(w.value)
 
 
 # def original(problem):
