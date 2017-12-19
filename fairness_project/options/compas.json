@@ -6,6 +6,7 @@
   ["age","sex","race","priors_count","c_charge_degree"],
   "protected":    "race",
   "tag":          "is_recid",
+  "fp_fn_weight":    0,
 
   "filters": [
     {

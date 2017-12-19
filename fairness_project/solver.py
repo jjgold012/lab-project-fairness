@@ -1,9 +1,10 @@
 import cvxpy as cvx
 import numpy as np
-from fairness_project.problem import FairnessProblem
+from sklearn.model_selection import train_test_split
+import fairness_project.problem as fair_prob
 
 
-def fairness(problem: FairnessProblem):
+def fairness(problem: fair_prob.FairnessProblem):
     x = problem.X
     y = problem.Y
     w = cvx.Variable(x.shape[1], 1)
@@ -16,6 +17,13 @@ def fairness(problem: FairnessProblem):
 
     regularize_fnr =\
         problem.fn_weight*cvx.abs(((np.sum(problem.X_1_pos, axis=0)/problem.X_1_pos.shape[0]) - (np.sum(problem.X_0_pos, axis=0)/problem.X_0_pos.shape[0]))*w)
+
+    regularize_fpr_squared = \
+        problem.fp_weight*cvx.square(((np.sum(problem.X_0_neg, axis=0)/problem.X_0_neg.shape[0]) - (np.sum(problem.X_1_neg, axis=0)/problem.X_1_neg.shape[0]))*w)
+
+    regularize_fnr_squared = \
+        problem.fn_weight*cvx.square(((np.sum(problem.X_1_pos, axis=0)/problem.X_1_pos.shape[0]) - (np.sum(problem.X_0_pos, axis=0)/problem.X_0_pos.shape[0]))*w)
+
 
     regularize_w = gamma*cvx.sum_squares(w)
 

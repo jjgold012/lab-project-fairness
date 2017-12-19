@@ -24,6 +24,7 @@ def load_problem(options):
     headers = options['data_headers']
     protected = options['protected']
     tag = options['tag']
+    fp_fn_weight = float(options['fp_fn_weight'])
     filters = options['filters']
     headers_integer_values = options['headers_integer_values']
 
