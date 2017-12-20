@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.cross_validation import train_test_split
 from sklearn import metrics
-from sklearn import preprocessing
-from sklearn.cross_validation import cross_val_score
-from pandas.tools.plotting import scatter_matrix
-from pandas.tools.plotting import parallel_coordinates
-from IPython.external.decorators import _numpy_testing_utils
+# from sklearn import preprocessing
+# from sklearn.cross_validation import cross_val_score
+# from pandas.tools.plotting import scatter_matrix
+# from pandas.tools.plotting import parallel_coordinates
+# from IPython.external.decorators import _numpy_testing_utils
 
 
 class PeekyReader:
@@ -26,7 +26,7 @@ class PeekyReader:
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if self.peeked is not None:
             ret = self.peeked
             self.peeked = None
@@ -357,7 +357,7 @@ def logistic_regression(X, Y, X_test, Y_test, num_steps, learning_rate, add_inte
     l2_regularizer_rate_case2 = 0.007
     
     
-    for step in xrange(num_steps):        
+    for step in range(num_steps):
         #FPR_regularizer_rate *= 0.999
         #FNR_regularizer_rate *= 0.999
         

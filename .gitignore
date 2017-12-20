@@ -8,3 +8,4 @@
 out
 gen
 fairness_project/__pycache__/
+.DS_Store
