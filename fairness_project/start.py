@@ -1,4 +1,5 @@
 import sys
+import os
 import json
 from csv import DictReader
 from fairness_project.fairness_data import FairnessProblem
@@ -20,11 +21,14 @@ def process_line(filters, headers_integer_values, line):
 
 
 def load_problem(options):
-    data_file = open('./datasets/' + options['data_set'] + '/' + options['file'])
+    data_file = open(os.path.dirname(__file__) + '/datasets/' + options['data_set'] + '/' + options['file'])
     headers = options['data_headers'].split(',')
     protected = options['protected']
     tag = options['tag']
-    fp_fn_weight = float(options['fp_fn_weight'])
+    fp_weight = float(options['fp_weight'])
+    fn_weight = float(options['fn_weight'])
+    gamma_gt = float(options['gamma']['gt'])
+    gamma_lt = float(options['gamma']['lt'])
     filters = options['filters']
     headers_integer_values = options['headers_integer_values']
 
@@ -39,7 +43,7 @@ def load_problem(options):
             x.append([float(processed_line[h]) for h in headers])
             y.append(int(processed_line[tag]))
 
-    return FairnessProblem(options['description'], x, y, protected_index, fp_fn_weight)
+    return FairnessProblem(options['description'], x, y, protected_index, gamma_gt, gamma_lt, fp_weight, fn_weight)
 
 
 def main(options_file):

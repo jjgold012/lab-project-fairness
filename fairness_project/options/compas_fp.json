@@ -6,8 +6,7 @@
   "protected":    "race",
   "tag":          "is_recid",
   "fp_weight":    100,
-  "fn_weight":    100,
-  "gamma":        {"gt": 0, "lt": 5},
+  "fn_weight":    0,
 
   "filters": [
     {

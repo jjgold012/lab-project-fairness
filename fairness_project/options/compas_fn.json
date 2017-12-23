@@ -5,9 +5,8 @@
   "data_headers": "age,sex,race,priors_count,c_charge_degree",
   "protected":    "race",
   "tag":          "is_recid",
-  "fp_weight":    100,
+  "fp_weight":    0,
   "fn_weight":    100,
-  "gamma":        {"gt": 0, "lt": 5},
 
   "filters": [
     {

@@ -436,7 +436,7 @@ def logistic_regression(X, Y, X_test, Y_test, num_steps, learning_rate, add_inte
         # Print log-likelihood every so often
         #if step % 50 == 0:
             # red dashes, blue squares and green triangles
-            #print log_likelihood(X, y, weights)
+            print(log_likelihood(X, np.round(Y_hat), weights))
         #print(weights)
     #plt.show()
     #print(perf_train)
@@ -860,13 +860,13 @@ if __name__ == "__main__":
         predicted_black = model4.predict(X_test_black)
         probs = model4.predict_proba(X_test_black)
         
-        acc_white += metrics.accuracy_score(list(y_test_white.transpose()[0]), list(predicted_white))
-        acc_black += metrics.accuracy_score(list(y_test_black.transpose()[0]), list(predicted_black))
+        acc_white += metrics.accuracy_score(list(y_test_white), list(predicted_white))
+        acc_black += metrics.accuracy_score(list(y_test_black), list(predicted_black))
     
         #print(j)
         
-        errors_white[j,:] = perf_measure(list(y_test_white.transpose()[0]), list(predicted_white))
-        errors_black[j,:] = perf_measure(list(y_test_black.transpose()[0]), list(predicted_black))
+        errors_white[j,:] = perf_measure(list(y_test_white), list(predicted_white))
+        errors_black[j,:] = perf_measure(list(y_test_black), list(predicted_black))
 
 
     rates_white = (np.sum(errors_white, axis=0))/100
