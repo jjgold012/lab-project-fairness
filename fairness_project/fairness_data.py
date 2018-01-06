@@ -12,8 +12,8 @@ class FairnessProblem:
                  gamma_lt,
                  weight_gt,
                  weight_lt,
-                 fp_weight,
-                 fn_weight,
+                 fp,
+                 fn,
                  weight_res,
                  gamma_res
                  ):
@@ -21,8 +21,8 @@ class FairnessProblem:
         self.protected_index = protected_index
         self.weight_gt = weight_gt
         self.weight_lt = weight_lt
-        self.fp_weight = fp_weight
-        self.fn_weight = fn_weight
+        self.fp = fp
+        self.fn = fn
         self.gamma_gt = gamma_gt
         self.gamma_lt = gamma_lt
         self.weight_res = weight_res

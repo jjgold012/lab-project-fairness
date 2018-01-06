@@ -36,8 +36,8 @@ def load_problem(options):
     headers = options['data_headers'].split(',')
     protected = options['protected']
     tag = options['tag']
-    fp_weight = bool(options['fp_weight'])
-    fn_weight = bool(options['fn_weight'])
+    fp = bool(options['fp'])
+    fn = bool(options['fn'])
     weight_gt = float(options['weight']['gt'])
     weight_lt = float(options['weight']['lt'])
     gamma_gt = float(options['gamma']['gt'])
@@ -68,8 +68,8 @@ def load_problem(options):
         gamma_lt=gamma_lt,
         weight_gt=weight_gt,
         weight_lt=weight_lt,
-        fp_weight=fp_weight,
-        fn_weight=fn_weight,
+        fp=fp,
+        fn=fn,
         weight_res=weight_res,
         gamma_res=gamma_res
     )

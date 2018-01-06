@@ -69,7 +69,7 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
     }
 
 
-def measure_results(x_test, y_test, protected_index, w, fp_weight, fn_weight):
+def measure_results(x_test, y_test, protected_index, w, fp, fn):
     y_hat = np.round(sigmoid(np.dot(x_test, w)))
     y_1, y_0 = np.array(split_by_protected_value(x_test, y_test, protected_index))[[1, 3]]
     y_1_hat, y_0_hat = np.array(split_by_protected_value(x_test, y_hat, protected_index))[[1, 3]]
@@ -87,7 +87,7 @@ def measure_results(x_test, y_test, protected_index, w, fp_weight, fn_weight):
         '0_fnr': _0_measures['fnr'],
         'fpr_diff': fpr_diff,
         'fnr_diff': fnr_diff,
-        'objective': all_measures['acc'] + fpr_diff + fnr_diff
+        'objective': all_measures['acc'] + (fpr_diff if fp else 0) + (fnr_diff if fn else 0)
     }
 
 
@@ -101,8 +101,8 @@ def fairness(problem: FairnessProblem):
     for weight in np.linspace(problem.weight_gt, problem.weight_lt, num=problem.weight_res):
         res_squared = list()
         res_abs = list()
-        fp_weight = float(weight if problem.fp_weight else 0)
-        fn_weight = float(weight if problem.fn_weight else 0)
+        fp_weight = float(weight if problem.fp else 0)
+        fn_weight = float(weight if problem.fn else 0)
         for gamma in np.linspace(problem.gamma_gt, problem.gamma_lt, num=problem.gamma_res):
             temp_res_squared = list()
             temp_res_abs = list()
@@ -111,8 +111,8 @@ def fairness(problem: FairnessProblem):
 
                 conv_squared = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
                 conv_abs = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
-                measures_squared = measure_results(x_test, y_test, protected_index, conv_squared['w'], fp_weight=fp_weight, fn_weight=fn_weight)
-                measures_abs = measure_results(x_test, y_test, protected_index, conv_abs['w'], fp_weight=fp_weight, fn_weight=fn_weight)
+                measures_squared = measure_results(x_test, y_test, protected_index, conv_squared['w'], fp=problem.fp, fn=problem.fn)
+                measures_abs = measure_results(x_test, y_test, protected_index, conv_abs['w'], fp=problem.fp, fn=problem.fn)
 
                 temp_res_squared.append({'results': conv_squared, 'measures': measures_squared})
                 temp_res_abs.append({'results': conv_abs, 'measures': measures_abs})
