@@ -9,7 +9,7 @@
   "fn":           true,
   "weight":       {"gt": 0, "lt": 500},
   "weight_res":   10,
-  "gamma":        {"gt": 0, "lt": 500},
+  "gamma":        {"gt": 0, "lt": 5},
   "gamma_res":    5,
 
   "filters": [

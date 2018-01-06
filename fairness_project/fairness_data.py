@@ -81,9 +81,3 @@ def measures(y, y_hat):
 
     return {'fpr': fp/neg, 'fnr': fn/pos, 'tpr': tp/pos, 'tnr': tn/neg, 'acc': (tn + tp)/y.shape[0]}
 
-
-def equalized_odds_reg(x, y, y_hat, protected_index):
-    x_1, y_1, x_0, y_0 = split_by_protected_value(x, y, protected_index)
-    y_1_hat, y_0_hat = np.array(split_by_protected_value(x, y_hat, protected_index))[[1, 3]]
-    x_1_pos = get_positive_examples(x_1, y_1)
-    x_0_pos = get_positive_examples(x_0, y_0)

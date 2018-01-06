@@ -95,15 +95,17 @@ def fairness(problem: FairnessProblem):
     x = problem.X
     y = problem.Y
     protected_index = problem.protected_index
-
+    print(problem.description)
     results_squared = list()
     results_abs = list()
     for weight in np.linspace(problem.weight_gt, problem.weight_lt, num=problem.weight_res):
+        print('weight:', weight)
         res_squared = list()
         res_abs = list()
         fp_weight = float(weight if problem.fp else 0)
         fn_weight = float(weight if problem.fn else 0)
         for gamma in np.linspace(problem.gamma_gt, problem.gamma_lt, num=problem.gamma_res):
+            print('gamma:', gamma)
             temp_res_squared = list()
             temp_res_abs = list()
             for j in range(5): #TODO check for cross validation sklearn
@@ -133,16 +135,19 @@ def fairness(problem: FairnessProblem):
         best_abs = res_abs[np.array([r['measures']['objective'] for r in res_abs]).argmin()]
         best_squared['weight'] = weight
         best_abs['weight'] = weight
-        pprint(best_squared)
         results_squared.append(best_squared)
         results_abs.append(best_abs)
 
     fig = plt.figure(figsize=(10, 5))
+    print('The result for squared relaxation')
+    pprint(results_squared)
     sub1 = fig.add_subplot(121)
     plot_results(sub1, results_squared, type='Squared')
+
+    print('The result for absolute value relaxation')
+    pprint(results_abs)
     sub2 = fig.add_subplot(122)
     plot_results(sub2, results_abs, type='Absolute value')
     plt.show()
-# equalized_odds_reg(x_train,y_train,y_train,problem.protected_index)
 
 
