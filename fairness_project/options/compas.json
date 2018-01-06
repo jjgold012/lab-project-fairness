@@ -8,8 +8,8 @@
   "fp_weight":    true,
   "fn_weight":    true,
   "weight":       {"gt": 0, "lt": 500},
-  "gamma":        {"gt": 0, "lt": 500},
   "weight_res":   10,
+  "gamma":        {"gt": 0, "lt": 500},
   "gamma_res":    5,
 
   "filters": [

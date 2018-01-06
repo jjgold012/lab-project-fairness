@@ -87,7 +87,7 @@ def measure_results(x_test, y_test, protected_index, w, fp_weight, fn_weight):
         '0_fnr': _0_measures['fnr'],
         'fpr_diff': fpr_diff,
         'fnr_diff': fnr_diff,
-        'objective': all_measures['acc'] + fp_weight*fpr_diff + fn_weight*fnr_diff
+        'objective': all_measures['acc'] + fpr_diff + fnr_diff
     }
 
 
