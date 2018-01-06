@@ -69,24 +69,25 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
     }
 
 
-def measure_results(x_test, y_test, protected_index, w):
+def measure_results(x_test, y_test, protected_index, w, fp_weight, fn_weight):
     y_hat = np.round(sigmoid(np.dot(x_test, w)))
     y_1, y_0 = np.array(split_by_protected_value(x_test, y_test, protected_index))[[1, 3]]
     y_1_hat, y_0_hat = np.array(split_by_protected_value(x_test, y_hat, protected_index))[[1, 3]]
 
-    acc_measures = dict()
-    acc_measures = measures(y_test, y_hat)
-    _1_acc_measures = measures(y_1, y_1_hat)
-    _0_acc_measures = measures(y_0, y_0_hat)
-
+    all_measures = measures(y_test, y_hat)
+    _1_measures = measures(y_1, y_1_hat)
+    _0_measures = measures(y_0, y_0_hat)
+    fpr_diff = abs(_1_measures['fpr'] - _0_measures['fpr'])
+    fnr_diff = abs(_1_measures['fnr'] - _0_measures['fnr'])
     return {
-        'acc': acc_measures['acc'],
-        '1_fpr': _1_acc_measures['fpr'],
-        '1_fnr': _1_acc_measures['fnr'],
-        '0_fpr': _0_acc_measures['fpr'],
-        '0_fnr': _0_acc_measures['fnr'],
-        'fpr_diff': abs(_1_acc_measures['fpr'] - _0_acc_measures['fpr']),
-        'fnr_diff': abs(_1_acc_measures['fnr'] - _0_acc_measures['fnr'])
+        'acc': all_measures['acc'],
+        '1_fpr': _1_measures['fpr'],
+        '1_fnr': _1_measures['fnr'],
+        '0_fpr': _0_measures['fpr'],
+        '0_fnr': _0_measures['fnr'],
+        'fpr_diff': fpr_diff,
+        'fnr_diff': fnr_diff,
+        'objective': all_measures['acc'] + fp_weight*fpr_diff + fn_weight*fnr_diff
     }
 
 
@@ -100,8 +101,8 @@ def fairness(problem: FairnessProblem):
     for weight in np.linspace(problem.weight_gt, problem.weight_lt, num=problem.weight_res):
         res_squared = list()
         res_abs = list()
-        fp_weight = weight if problem.fp_weight else 0
-        fn_weight = weight if problem.fn_weight else 0
+        fp_weight = float(weight if problem.fp_weight else 0)
+        fn_weight = float(weight if problem.fn_weight else 0)
         for gamma in np.linspace(problem.gamma_gt, problem.gamma_lt, num=problem.gamma_res):
             temp_res_squared = list()
             temp_res_abs = list()
@@ -110,8 +111,8 @@ def fairness(problem: FairnessProblem):
 
                 conv_squared = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
                 conv_abs = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
-                measures_squared = measure_results(x_test, y_test, protected_index, conv_squared['w'])
-                measures_abs = measure_results(x_test, y_test, protected_index, conv_abs['w'])
+                measures_squared = measure_results(x_test, y_test, protected_index, conv_squared['w'], fp_weight=fp_weight, fn_weight=fn_weight)
+                measures_abs = measure_results(x_test, y_test, protected_index, conv_abs['w'], fp_weight=fp_weight, fn_weight=fn_weight)
 
                 temp_res_squared.append({'results': conv_squared, 'measures': measures_squared})
                 temp_res_abs.append({'results': conv_abs, 'measures': measures_abs})
@@ -128,8 +129,8 @@ def fairness(problem: FairnessProblem):
             res_squared.append(gamma_result_squared)
             res_abs.append(gamma_result_abs)
 
-        best_squared = res_squared[np.array([r['measures']['acc'] for r in res_squared]).argmin()]
-        best_abs = res_abs[np.array([r['measures']['acc'] for r in res_abs]).argmin()]
+        best_squared = res_squared[np.array([r['measures']['objective'] for r in res_squared]).argmin()]
+        best_abs = res_abs[np.array([r['measures']['objective'] for r in res_abs]).argmin()]
         best_squared['weight'] = weight
         best_abs['weight'] = weight
         pprint(best_squared)
