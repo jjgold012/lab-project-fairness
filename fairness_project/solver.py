@@ -26,6 +26,20 @@ def plot_results(subplot, results, type):
     subplot.legend(loc='best', prop={'size':11}, ncol=1)
 
 
+def show_results(results_squared, results_abs):
+    fig = plt.figure(figsize=(10, 5))
+    print('The result for squared relaxation')
+    pprint(results_squared)
+    sub1 = fig.add_subplot(121)
+    plot_results(sub1, results_squared, type='Squared')
+
+    print('The result for absolute value relaxation')
+    pprint(results_abs)
+    sub2 = fig.add_subplot(122)
+    plot_results(sub2, results_abs, type='Absolute value')
+    plt.show()
+
+
 def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=True):
     x_1, y_1, x_0, y_0 = split_by_protected_value(x, y, protected_index)
     x_1_pos = get_positive_examples(x_1, y_1)
@@ -65,7 +79,7 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
         'll': log_likelihood.value,
         'fnr_diff': fnr_diff.value,
         'fpr_diff': fpr_diff.value,
-        'objective': ((-log_likelihood.value) + fn_weight*fnr_diff.value + fp_weight*fpr_diff.value)
+        'objective': objective.value
     }
 
 
@@ -138,16 +152,6 @@ def fairness(problem: FairnessProblem):
         results_squared.append(best_squared)
         results_abs.append(best_abs)
 
-    fig = plt.figure(figsize=(10, 5))
-    print('The result for squared relaxation')
-    pprint(results_squared)
-    sub1 = fig.add_subplot(121)
-    plot_results(sub1, results_squared, type='Squared')
-
-    print('The result for absolute value relaxation')
-    pprint(results_abs)
-    sub2 = fig.add_subplot(122)
-    plot_results(sub2, results_abs, type='Absolute value')
-    plt.show()
+    show_results(results_squared, results_abs)
 
 
