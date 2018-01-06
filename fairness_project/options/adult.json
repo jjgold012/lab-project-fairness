@@ -1,12 +1,12 @@
 {
-  "description":  "compas dataset with protected value race",
-  "data_set":     "compas-dataset",
-  "file":         "compas-scores-two-years.csv",
-  "data_headers": "age,sex,race,priors_count,c_charge_degree",
+  "description":  "",
+  "data_set":     "adult-dataset",
+  "file":         "adult.csv",
+  "data_headers": "age,workclass,fnlwgt,education,education-num,marital-status,occupation,relationship,race,sex,capital-gain,capital-loss,hours-per-week,native-country,class",
   "protected":    "race",
   "tag":          "is_recid",
-  "fp_weight":    10000,
-  "fn_weight":    0,
+  "fp_weight":    100,
+  "fn_weight":    100,
   "gamma":        {"gt": 0, "lt": 5},
 
   "filters": [

@@ -1,5 +1,6 @@
 import cvxpy as cp
 import numpy as np
+import matplotlib.pyplot as plt
 from pprint import pprint
 from sklearn.model_selection import train_test_split
 from fairness_project.fairness_data import *
@@ -9,8 +10,20 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 
-def solve_non_convex():
-    print('non-convex')
+def plot_results(subplot, results, type):
+    weights = [r['weight'] for r in results]
+    acc = [r['measures']['acc'] for r in results]
+    fnr_diff = [r['measures']['fnr_diff'] for r in results]
+    fpr_diff = [r['measures']['fpr_diff'] for r in results]
+    r_fnr_diff = [r['results']['fnr_diff'] for r in results]
+    r_fpr_diff = [r['results']['fpr_diff'] for r in results]
+    subplot.set_title(type)
+    subplot.plot(weights, acc, 'r-', label="Accuracy", linewidth=2)
+    subplot.plot(weights, fnr_diff, 'g-', label="fnr diff", linewidth=2)
+    subplot.plot(weights, r_fnr_diff, 'g--', label="relaxed fnr diff", linewidth=2)
+    subplot.plot(weights, fpr_diff, 'b-', label="fpr diff", linewidth=2)
+    subplot.plot(weights, r_fpr_diff, 'b--', label="relaxed fpr diff", linewidth=2)
+    subplot.legend(loc='best', prop={'size':11}, ncol=1)
 
 
 def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=True):
@@ -51,7 +64,8 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
         'w': w.value,
         'll': log_likelihood.value,
         'fnr_diff': fnr_diff.value,
-        'fpr_diff': fpr_diff.value
+        'fpr_diff': fpr_diff.value,
+        'objective': ((-log_likelihood.value) + fn_weight*fnr_diff.value + fp_weight*fpr_diff.value)
     }
 
 
@@ -61,63 +75,73 @@ def measure_results(x_test, y_test, protected_index, w):
     y_1_hat, y_0_hat = np.array(split_by_protected_value(x_test, y_hat, protected_index))[[1, 3]]
 
     acc_measures = dict()
-    acc_measures['all'] = measures(y_test, y_hat)
-    acc_measures['1'] = measures(y_1, y_1_hat)
-    acc_measures['0'] = measures(y_0, y_0_hat)
+    acc_measures = measures(y_test, y_hat)
+    _1_acc_measures = measures(y_1, y_1_hat)
+    _0_acc_measures = measures(y_0, y_0_hat)
 
     return {
-        'acc': acc_measures['all']['acc'],
-        'fpr': acc_measures['all']['fnr'],
-        'fnr': acc_measures['all']['fpr'],
-        '1_acc': acc_measures['1']['acc'],
-        '1_fpr': acc_measures['1']['fnr'],
-        '1_fnr': acc_measures['1']['fpr'],
-        '0_acc': acc_measures['0']['acc'],
-        '0_fpr': acc_measures['0']['fnr'],
-        '0_fnr': acc_measures['0']['fpr'],
-        'fpr_diff': abs(acc_measures['1']['fpr'] - acc_measures['0']['fpr']),
-        'fnr_diff': abs(acc_measures['1']['fnr'] - acc_measures['0']['fnr'])
+        'acc': acc_measures['acc'],
+        '1_fpr': _1_acc_measures['fpr'],
+        '1_fnr': _1_acc_measures['fnr'],
+        '0_fpr': _0_acc_measures['fpr'],
+        '0_fnr': _0_acc_measures['fnr'],
+        'fpr_diff': abs(_1_acc_measures['fpr'] - _0_acc_measures['fpr']),
+        'fnr_diff': abs(_1_acc_measures['fnr'] - _0_acc_measures['fnr'])
     }
 
 
 def fairness(problem: FairnessProblem):
     x = problem.X
     y = problem.Y
-    fp_weight = problem.fp_weight
-    fn_weight = problem.fn_weight
-
     protected_index = problem.protected_index
 
     results_squared = list()
     results_abs = list()
-    for gamma in np.linspace(problem.gamma_gt, problem.gamma_lt, num=10):
-        temp_res_squared = list()
-        temp_res_abs = list()
-        for j in range(10):
-            x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=j)
+    for weight in np.linspace(problem.weight_gt, problem.weight_lt, num=problem.weight_res):
+        res_squared = list()
+        res_abs = list()
+        fp_weight = weight if problem.fp_weight else 0
+        fn_weight = weight if problem.fn_weight else 0
+        for gamma in np.linspace(problem.gamma_gt, problem.gamma_lt, num=problem.gamma_res):
+            temp_res_squared = list()
+            temp_res_abs = list()
+            for j in range(5): #TODO check for cross validation sklearn
+                x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=j)
 
-            res_squared = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
-            res_abs = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
+                conv_squared = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
+                conv_abs = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
+                measures_squared = measure_results(x_test, y_test, protected_index, conv_squared['w'])
+                measures_abs = measure_results(x_test, y_test, protected_index, conv_abs['w'])
 
-            measures_squared = measure_results(x_test, y_test, protected_index, res_squared['w'])
-            measures_abs = measure_results(x_test, y_test, protected_index, res_abs['w'])
+                temp_res_squared.append({'results': conv_squared, 'measures': measures_squared})
+                temp_res_abs.append({'results': conv_abs, 'measures': measures_abs})
 
-            temp_res_squared.append(measures_squared)
-            temp_res_abs.append(measures_abs)
+            gamma_result_squared = {'gamma': gamma}
+            gamma_result_abs = {'gamma': gamma}
+            for key1 in temp_res_squared[0].keys():
+                gamma_result_squared[key1] = dict()
+                gamma_result_abs[key1] = dict()
+                for key2 in temp_res_squared[0][key1].keys():
+                    gamma_result_squared[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_squared]))
+                    gamma_result_abs[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_abs]))
 
-        gamma_result_squared = dict()
-        gamma_result_abs = dict()
-        gamma_result_squared['gamma'] = gamma
-        gamma_result_abs['gamma'] = gamma
-        for key in temp_res_squared[0].keys():
-            gamma_result_squared[key] = np.average(np.array([r[key] for r in temp_res_squared]))
-            gamma_result_abs[key] = np.average(np.array([r[key] for r in temp_res_abs]))
+            res_squared.append(gamma_result_squared)
+            res_abs.append(gamma_result_abs)
 
-        results_squared.append(gamma_result_squared)
-        results_abs.append(gamma_result_abs)
+        best_squared = res_squared[np.array([r['measures']['acc'] for r in res_squared]).argmin()]
+        best_abs = res_abs[np.array([r['measures']['acc'] for r in res_abs]).argmin()]
+        best_squared['weight'] = weight
+        best_abs['weight'] = weight
+        pprint(best_squared)
+        results_squared.append(best_squared)
+        results_abs.append(best_abs)
 
-        pprint(gamma_result_squared)
-
+    fig = plt.figure(figsize=(10, 5))
+    sub1 = fig.add_subplot(121)
+    plot_results(sub1, results_squared, type='Squared')
+    sub2 = fig.add_subplot(122)
+    plot_results(sub2, results_abs, type='Absolute value')
+    plt.show()
 # equalized_odds_reg(x_train,y_train,y_train,problem.protected_index)
 
 

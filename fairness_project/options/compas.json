@@ -5,9 +5,12 @@
   "data_headers": "age,sex,race,priors_count,c_charge_degree",
   "protected":    "race",
   "tag":          "is_recid",
-  "fp_weight":    100,
-  "fn_weight":    100,
-  "gamma":        {"gt": 0, "lt": 5},
+  "fp_weight":    1,
+  "fn_weight":    1,
+  "weight":       {"gt": 0, "lt": 500},
+  "gamma":        {"gt": 0, "lt": 500},
+  "weight_res":   10,
+  "gamma_res":    5,
 
   "filters": [
     {
@@ -15,8 +18,21 @@
       "values": ["0"]
     },
     {
+      "header": "is_recid",
+      "values": ["-1"]
+    },
+    {
       "header": "score_text",
       "values": ["N/A"]
+    },
+    {
+      "header": "days_b_screening_arrest",
+      "values": [""],
+      "range": {
+        "type": "or",
+        "gt": 30,
+        "lt": -30
+      }
     }
   ],
 

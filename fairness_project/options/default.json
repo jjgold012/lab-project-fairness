@@ -1,12 +1,12 @@
 {
-  "description":  "compas dataset with protected value race",
-  "data_set":     "compas-dataset",
-  "file":         "compas-scores-two-years.csv",
-  "data_headers": "age,sex,race,priors_count,c_charge_degree",
+  "description":  "",
+  "data_set":     "default-dataset",
+  "file":         "default_of_credit_card_clients.csv",
+  "data_headers": "ID,LIMIT_BAL,SEX,EDUCATION,MARRIAGE,AGE,PAY_0,PAY_2,PAY_3,PAY_4,PAY_5,PAY_6,BILL_AMT1,BILL_AMT2,BILL_AMT3,BILL_AMT4,BILL_AMT5,BILL_AMT6,PAY_AMT1,PAY_AMT2,PAY_AMT3,PAY_AMT4,PAY_AMT5,PAY_AMT6,default payment next month",
   "protected":    "race",
   "tag":          "is_recid",
-  "fp_weight":    10000,
-  "fn_weight":    0,
+  "fp_weight":    100,
+  "fn_weight":    100,
   "gamma":        {"gt": 0, "lt": 5},
 
   "filters": [

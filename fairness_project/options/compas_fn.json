@@ -6,12 +6,17 @@
   "protected":    "race",
   "tag":          "is_recid",
   "fp_weight":    0,
-  "fn_weight":    100,
+  "fn_weight":    10000,
+  "gamma":        {"gt": 0, "lt": 5},
 
   "filters": [
     {
       "header": "c_charge_degree",
       "values": ["0"]
+    },
+    {
+      "header": "is_recid",
+      "values": ["-1"]
     },
     {
       "header": "score_text",

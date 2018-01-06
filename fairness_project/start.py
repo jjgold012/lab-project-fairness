@@ -1,6 +1,7 @@
 import sys
 import os
 import json
+import math
 from csv import DictReader
 from fairness_project.fairness_data import FairnessProblem
 import fairness_project.solver as solve
@@ -8,8 +9,18 @@ import fairness_project.solver as solve
 
 def process_line(filters, headers_integer_values, line):
     for f in filters:
-        if line[f['header']] in f['values']:
-            return
+        if f.get('values', None):
+            if line[f['header']] in f['values']:
+                return
+        if f.get('range', None):
+            lt = float(f['range'].get('lt', -math.inf))
+            gt = float(f['range'].get('gt', math.inf))
+            if f['range']['type'].lower() == 'and':
+                if float(line[f['header']]) < lt and float(line[f['header']]) > gt:
+                    return
+            else:
+                if float(line[f['header']]) < lt or float(line[f['header']]) > gt:
+                    return
 
     line_copy = line.copy()
     for h in headers_integer_values:
@@ -25,11 +36,16 @@ def load_problem(options):
     headers = options['data_headers'].split(',')
     protected = options['protected']
     tag = options['tag']
-    fp_weight = float(options['fp_weight'])
-    fn_weight = float(options['fn_weight'])
+    fp_weight = bool(options['fp_weight'])
+    fn_weight = bool(options['fn_weight'])
+    weight_gt = float(options['weight']['gt'])
+    weight_lt = float(options['weight']['lt'])
     gamma_gt = float(options['gamma']['gt'])
     gamma_lt = float(options['gamma']['lt'])
+    weight_res = int(options['weight_res'])
+    gamma_res = int(options['gamma_res'])
     filters = options['filters']
+
     headers_integer_values = options['headers_integer_values']
 
     file_reader = DictReader(data_file)
@@ -43,7 +59,20 @@ def load_problem(options):
             x.append([float(processed_line[h]) for h in headers])
             y.append(int(processed_line[tag]))
 
-    return FairnessProblem(options['description'], x, y, protected_index, gamma_gt, gamma_lt, fp_weight, fn_weight)
+    return FairnessProblem(
+        description=options['description'],
+        x=x,
+        y=y,
+        protected_index=protected_index,
+        gamma_gt=gamma_gt,
+        gamma_lt=gamma_lt,
+        weight_gt=weight_gt,
+        weight_lt=weight_lt,
+        fp_weight=fp_weight,
+        fn_weight=fn_weight,
+        weight_res=weight_res,
+        gamma_res=gamma_res
+    )
 
 
 def main(options_file):

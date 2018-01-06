@@ -524,7 +524,7 @@ if __name__ == "__main__":
     data_list = create_two_year_files()
     X,y = set_data(data_list)
     
-    
+    print(X.shape)
      # White
     X_white = X[np.where(X[:,2] == 1)]
     Y_white = y[np.where(X[:,2] == 1)]

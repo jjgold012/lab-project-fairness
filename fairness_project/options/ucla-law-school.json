@@ -1,12 +1,12 @@
 {
-  "description":  "compas dataset with protected value race",
-  "data_set":     "compas-dataset",
-  "file":         "compas-scores-two-years.csv",
-  "data_headers": "age,sex,race,priors_count,c_charge_degree",
+  "description":  "",
+  "data_set":     "ucla-law-school-dataset",
+  "file":         "lsac.csv",
+  "data_headers": "decile1b,decile3,id,decile1,sex,race,cluster,lsat,ugpa,zfygpa,dob_yr,grad,zgpa,bar1,bar1_yr,bar2,bar2_yr,fulltime,fam_inc,age,gender,parttime,male,race1,race2,dropout,other,asian,black,hisp,pass_bar,bar,tier,index604,indxgrp,indxgrp2",
   "protected":    "race",
   "tag":          "is_recid",
-  "fp_weight":    10000,
-  "fn_weight":    0,
+  "fp_weight":    100,
+  "fn_weight":    100,
   "gamma":        {"gt": 0, "lt": 5},
 
   "filters": [
