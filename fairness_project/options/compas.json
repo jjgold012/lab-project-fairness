@@ -7,8 +7,8 @@
   "tag":          "is_recid",
   "fp":           true,
   "fn":           true,
-  "weight":       {"gt": 0, "lt": 500},
-  "weight_res":   10,
+  "weight":       {"gt": 0, "lt": 400},
+  "weight_res":   20,
   "gamma":        {"gt": 0, "lt": 5},
   "gamma_res":    5,
 
