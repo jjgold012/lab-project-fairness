@@ -5,9 +5,13 @@
   "data_headers": "age,workclass,fnlwgt,education,education-num,marital-status,occupation,relationship,race,sex,capital-gain,capital-loss,hours-per-week,native-country,class",
   "protected":    "race",
   "tag":          "is_recid",
-  "fp_weight":    100,
-  "fn_weight":    100,
+  "fp":           true,
+  "fn":           true,
+  "weight":       {"gt": 0, "lt": 400},
+  "weight_res":   20,
   "gamma":        {"gt": 0, "lt": 5},
+  "gamma_res":    5,
+
 
   "filters": [
     {

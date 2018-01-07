@@ -5,9 +5,13 @@
   "data_headers": "decile1b,decile3,id,decile1,sex,race,cluster,lsat,ugpa,zfygpa,dob_yr,grad,zgpa,bar1,bar1_yr,bar2,bar2_yr,fulltime,fam_inc,age,gender,parttime,male,race1,race2,dropout,other,asian,black,hisp,pass_bar,bar,tier,index604,indxgrp,indxgrp2",
   "protected":    "race",
   "tag":          "is_recid",
-  "fp_weight":    100,
-  "fn_weight":    100,
+  "fp":           true,
+  "fn":           true,
+  "weight":       {"gt": 0, "lt": 400},
+  "weight_res":   20,
   "gamma":        {"gt": 0, "lt": 5},
+  "gamma_res":    5,
+
 
   "filters": [
     {
