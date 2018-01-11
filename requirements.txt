@@ -3,4 +3,3 @@ numpy
 matplotlib
 cvxpy
 sklearn
-pandas

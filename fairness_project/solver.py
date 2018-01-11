@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pprint import pprint
 from sklearn.model_selection import train_test_split
-from fairness_project.fairness_data import *
+from fairness_data import *
 
 
 def plot_results(subplot, results, type):
@@ -44,7 +44,7 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 
-def measure_objective_results(x_test, y_test, protected_index, w, fp, fn):
+def measure_objective_results(x_test, y_test, protected_index, w):
     y_hat = np.round(sigmoid(np.dot(x_test, w)))
     y_1, y_0 = np.array(split_by_protected_value(x_test, y_test, protected_index))[[1, 3]]
     y_1_hat, y_0_hat = np.array(split_by_protected_value(x_test, y_hat, protected_index))[[1, 3]]
@@ -69,7 +69,7 @@ def logistic(x):
     return np.log(1 + np.exp(x))
 
 
-def measure_relaxed_results(x_test, y_test, protected_index, w, fp, fn, fp_weight, fn_weight, squared=True):
+def measure_relaxed_results(x_test, y_test, protected_index, w, fp_weight, fn_weight, squared=True):
     x_1, y_1, x_0, y_0 = split_by_protected_value(x_test, y_test, protected_index)
     x_1_pos = get_positive_examples(x_1, y_1)
     x_1_neg = get_negative_examples(x_1, y_1)
@@ -89,7 +89,7 @@ def measure_relaxed_results(x_test, y_test, protected_index, w, fp, fn, fp_weigh
         'll': log_likelihood,
         'fnr_diff': fnr_diff,
         'fpr_diff': fpr_diff,
-        'objective': -log_likelihood + (fp_weight*fpr_diff if fp else 0) + (fn_weight*fnr_diff if fn else 0)
+        'objective': -log_likelihood + fp_weight*fpr_diff + fn_weight*fnr_diff
     }
 
 
@@ -121,7 +121,7 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
                             gamma*w_norm_square)
 
     p = cp.Problem(objective)
-    p.solve()
+    p.solve(max_iters=1000)
 
     return {
         'w': w.value,
@@ -155,11 +155,11 @@ def fairness(problem: FairnessProblem):
                 conv_squared = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
                 conv_abs = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
 
-                relaxed_squared = measure_relaxed_results(x_test, y_test, protected_index, conv_squared['w'], fp=problem.fp, fn=problem.fn, fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
-                relaxed_abs = measure_relaxed_results(x_test, y_test, protected_index, conv_abs['w'], fp=problem.fp, fn=problem.fn, fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
+                relaxed_squared = measure_relaxed_results(x_test, y_test, protected_index, conv_squared['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
+                relaxed_abs = measure_relaxed_results(x_test, y_test, protected_index, conv_abs['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
 
-                measures_squared = measure_objective_results(x_test, y_test, protected_index, conv_squared['w'], fp=problem.fp, fn=problem.fn)
-                measures_abs = measure_objective_results(x_test, y_test, protected_index, conv_abs['w'], fp=problem.fp, fn=problem.fn)
+                measures_squared = measure_objective_results(x_test, y_test, protected_index, conv_squared['w'])
+                measures_abs = measure_objective_results(x_test, y_test, protected_index, conv_abs['w'])
 
                 temp_res_squared.append({'train_results': conv_squared, 'test_results': relaxed_squared, 'test_measures': measures_squared})
                 temp_res_abs.append({'train_results': conv_abs, 'test_results': relaxed_abs, 'test_measures': measures_abs})

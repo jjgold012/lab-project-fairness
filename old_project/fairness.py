@@ -1,7 +1,6 @@
-from sys import stdout
+import os
 from csv import DictReader, DictWriter
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.cross_validation import train_test_split
@@ -258,7 +257,7 @@ def is_race(race):
 def create_two_year_files():
     people = []
     headers = []
-    with open("./compas-scores-two-years.csv") as f:
+    with open(os.path.dirname(__file__) +"/compas-scores-two-years.csv") as f:
         reader = PeekyReader(DictReader(f))
         try:
             while True:
@@ -436,7 +435,7 @@ def logistic_regression(X, Y, X_test, Y_test, num_steps, learning_rate, add_inte
         # Print log-likelihood every so often
         #if step % 50 == 0:
             # red dashes, blue squares and green triangles
-            print(log_likelihood(X, np.round(Y_hat), weights))
+            # print(log_likelihood(X, np.round(Y_hat), weights))
         #print(weights)
     #plt.show()
     #print(perf_train)

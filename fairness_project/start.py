@@ -3,8 +3,8 @@ import os
 import json
 import math
 from csv import DictReader
-from fairness_project.fairness_data import FairnessProblem
-import fairness_project.solver as solve
+from fairness_data import FairnessProblem
+import solver as solve
 
 
 def process_line(filters, headers_integer_values, line):
