@@ -170,8 +170,12 @@ def fairness(problem: FairnessProblem):
                 gamma_result_squared[key1] = dict()
                 gamma_result_abs[key1] = dict()
                 for key2 in temp_res_squared[0][key1].keys():
-                    gamma_result_squared[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_squared]))
-                    gamma_result_abs[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_abs]))
+                    if key2 == 'w':
+                        gamma_result_squared[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_squared]), axis=0)
+                        gamma_result_abs[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_abs]), axis=0)
+                    else:
+                        gamma_result_squared[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_squared]))
+                        gamma_result_abs[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_abs]))
 
             res_squared.append(gamma_result_squared)
             res_abs.append(gamma_result_abs)
