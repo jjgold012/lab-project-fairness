@@ -13,8 +13,8 @@ def process_line(filters, headers_integer_values, line):
             if line[f['header']] in f['values']:
                 return
         if f.get('range', None):
-            lt = float(f['range'].get('lt', -math.inf))
-            gt = float(f['range'].get('gt', math.inf))
+            lt = float(f['range'].get('lt', -float('inf')))
+            gt = float(f['range'].get('gt', float('inf')))
             if f['range']['type'].lower() == 'and':
                 if float(line[f['header']]) < lt and float(line[f['header']]) > gt:
                     return
@@ -44,6 +44,7 @@ def load_problem(options):
     gamma_lt = float(options['gamma']['lt'])
     weight_res = int(options['weight_res'])
     gamma_res = int(options['gamma_res'])
+    test_size = float(options['test_size'])
     filters = options['filters']
 
     headers_integer_values = options['headers_integer_values']
@@ -71,7 +72,8 @@ def load_problem(options):
         fp=fp,
         fn=fn,
         weight_res=weight_res,
-        gamma_res=gamma_res
+        gamma_res=gamma_res,
+        test_size=test_size
     )
 
 

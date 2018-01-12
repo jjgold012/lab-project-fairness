@@ -7,10 +7,11 @@
   "tag":          "is_recid",
   "fp":           true,
   "fn":           true,
-  "weight":       {"gt": 0, "lt": 400},
-  "weight_res":   5,
+  "weight":       {"gt": 0, "lt": 1500},
+  "weight_res":   21,
   "gamma":        {"gt": 0, "lt": 1},
-  "gamma_res":    3,
+  "gamma_res":    5,
+  "test_size":    0.33,
 
   "filters": [
     {

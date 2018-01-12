@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from pprint import pprint
 from sklearn.model_selection import train_test_split
 from fairness_data import *
+# import gurobipy
 
 
 def plot_results(subplot, results, type):
@@ -28,12 +29,12 @@ def plot_results(subplot, results, type):
 
 def show_results(results_squared, results_abs):
     fig = plt.figure(figsize=(10, 5))
-    print('The result for squared relaxation')
+    print('\nThe result for squared relaxation:\n')
     pprint(results_squared)
     sub1 = fig.add_subplot(121)
     plot_results(sub1, results_squared, type='Squared')
 
-    print('The result for absolute value relaxation')
+    print('\nThe result for absolute value relaxation:\n')
     pprint(results_abs)
     sub2 = fig.add_subplot(122)
     plot_results(sub2, results_abs, type='Absolute value')
@@ -121,7 +122,7 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
                             gamma*w_norm_square)
 
     p = cp.Problem(objective)
-    p.solve(max_iters=1000)
+    p.solve()
 
     return {
         'w': w.value,
@@ -132,7 +133,7 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
     }
 
 
-def fairness(problem: FairnessProblem):
+def fairness(problem):
     print(problem.description)
     x = problem.X
     y = problem.Y
@@ -150,7 +151,7 @@ def fairness(problem: FairnessProblem):
             temp_res_squared = list()
             temp_res_abs = list()
             for j in range(5): #TODO check for cross validation sklearn
-                x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=j)
+                x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=problem.test_size, random_state=j)
 
                 conv_squared = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
                 conv_abs = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=False)

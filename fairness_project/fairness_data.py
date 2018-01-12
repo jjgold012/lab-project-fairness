@@ -15,7 +15,8 @@ class FairnessProblem:
                  fp,
                  fn,
                  weight_res,
-                 gamma_res
+                 gamma_res,
+                 test_size
                  ):
         self.description = description
         self.protected_index = protected_index
@@ -27,6 +28,7 @@ class FairnessProblem:
         self.gamma_lt = gamma_lt
         self.weight_res = weight_res
         self.gamma_res = gamma_res
+        self.test_size = test_size
         self.X = np.array(x)
         self.Y = np.array(y)
 
