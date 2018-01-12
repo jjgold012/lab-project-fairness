@@ -7,11 +7,11 @@
   "tag":          "default payment next month",
   "fp":           true,
   "fn":           true,
-  "weight":       {"gt": 0, "lt": 400},
+  "weight":       {"gt": 0, "lt": 100},
   "weight_res":   11,
-  "gamma":        {"gt": 0, "lt": 10},
-  "gamma_res":    5,
-  "test_size":    0.95,
+  "gamma":        {"gt": 0.1, "lt": 0.1},
+  "gamma_res":    1,
+  "test_size":    0.8,
 
 
   "filters": [],

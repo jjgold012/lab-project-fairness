@@ -17,11 +17,11 @@ def plot_results(subplot, results, type):
     subplot.set_autoscaley_on(False)
     subplot.set_ylim([0, 1])
     subplot.set_title(type)
-    subplot.plot(weights, acc, 'r-', label="Accuracy", linewidth=2)
-    subplot.plot(weights, fnr_diff, 'g-', label="FNR diff", linewidth=2)
-    subplot.plot(weights, r_fnr_diff, 'g--', label="relaxed FNR diff", linewidth=2)
-    subplot.plot(weights, fpr_diff, 'b-', label="FPR diff", linewidth=2)
-    subplot.plot(weights, r_fpr_diff, 'b--', label="relaxed FPR diff", linewidth=2)
+    subplot.plot(weights, acc, 'r-', label="Accuracy", linewidth=3)
+    subplot.plot(weights, fnr_diff, 'g-', label="FNR diff", linewidth=3)
+    subplot.plot(weights, r_fnr_diff, 'g--', label="relaxed FNR diff", linewidth=3)
+    subplot.plot(weights, fpr_diff, 'b-', label="FPR diff", linewidth=3)
+    subplot.plot(weights, r_fpr_diff, 'b--', label="relaxed FPR diff", linewidth=3)
     subplot.set_xlabel('Fairness weight')
     subplot.set_ylabel('Rate')
     subplot.legend(loc='best', prop={'size':11}, ncol=1)
@@ -134,7 +134,8 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
 
 
 def fairness(problem):
-    print(problem.description)
+    print('\nStart\n')
+
     x = problem.X
     y = problem.Y
     protected_index = problem.protected_index
@@ -187,7 +188,12 @@ def fairness(problem):
         best_abs['weight'] = weight
         results_squared.append(best_squared)
         results_abs.append(best_abs)
+        print(best_squared['gamma'])
+        print(best_abs['gamma'])
 
+    print(problem.description)
     show_results(results_squared, results_abs)
+    print('\nFinished\n')
+
 
 
