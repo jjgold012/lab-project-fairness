@@ -1,6 +1,6 @@
 # lab-project-fairness
 
-For more details look at [Project.pdf](https://github.cs.huji.ac.il/jjgold/lab-project-fairness/blob/master/Project.pdf)
+For more details look at [Project.pdf](https://github.cs.huji.ac.il/jjgold/lab-project-fairness/blob/master/Project.pdf) and [here](https://arxiv.org/pdf/1707.00044.pdf)
 
 ## Requirements
 Run:
@@ -26,6 +26,6 @@ python3 fairness_project/start.py fairness_project/options/default.json
 ```
 
 ### Results
-The outputs results can be seen in the ```results``` folder. 
+The outputs results can be seen in the ```results``` folder.
 
-** The ```default``` data set result are with train set size of 20% because the dataset is quite large and it ran for a long time. 
+** The ```default``` data set result are with train set size of 20% because the dataset is quite large and it ran for a long time.
