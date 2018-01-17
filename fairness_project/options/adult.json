@@ -2,14 +2,14 @@
   "description":  "",
   "data_set":     "adult-dataset",
   "file":         "adult.csv",
-  "data_headers": "age,workclass,fnlwgt,education-num,marital-status,occupation,relationship,race,sex,capital-gain,capital-loss,hours-per-week,native-country,class",
+  "data_headers": "age,workclass,fnlwgt,education-num,marital-status,occupation,relationship,race,sex,capital-gain,capital-loss,hours-per-week,native-country",
   "protected":    "sex",
   "tag":          "class",
   "fp":           true,
   "fn":           true,
   "weight":       {"gt": 0, "lt": 400},
   "weight_res":   20,
-  "gamma":        {"gt": 0, "lt": 5},
+  "gamma":        {"gt": 5, "lt": 10},
   "gamma_res":    5,
   "test_size":    0.95,
 
@@ -141,4 +141,3 @@
     }
   ]
 }
-
