@@ -1,18 +1,18 @@
 {
-  "description":  "",
+  "description":  "adult dataset with protected value gender",
   "data_set":     "adult-dataset",
   "file":         "adult.csv",
   "data_headers": "age,workclass,fnlwgt,education-num,marital-status,occupation,relationship,race,sex,capital-gain,capital-loss,hours-per-week,native-country",
   "protected":    "sex",
   "tag":          "class",
   "fp":           true,
-  "fn":           true,
-  "weight":       {"gt": 0, "lt": 400},
-  "weight_res":   20,
-  "gamma":        {"gt": 5, "lt": 10},
-  "gamma_res":    5,
-  "test_size":    0.95,
-
+  "fn":           false,
+  "weight":       {"gt": 0, "lt": 800},
+  "weight_res":   21,
+  "gamma":        {"gt": 0, "lt": 100},
+  "gamma_res":    21,
+  "test_size":    0.80,
+  "num_of_tries": 10,
 
   "filters": [
     {

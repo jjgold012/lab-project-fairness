@@ -12,7 +12,7 @@
   "gamma":        {"gt": 5, "lt": 12},
   "gamma_res":    2,
   "test_size":    0.95,
-
+  "num_of_tries": 5,
 
   "filters": [],
 

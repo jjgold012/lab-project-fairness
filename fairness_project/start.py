@@ -3,7 +3,7 @@ import os
 import json
 import math
 from csv import DictReader
-from fairness_data import FairnessProblem
+from fairness_data import *
 import solver as solve
 
 
@@ -31,7 +31,7 @@ def process_line(filters, headers_integer_values, line):
     return line_copy
 
 
-def load_problem(options):
+def load_problem_from_options(options):
     data_file = open(os.path.dirname(__file__) + '/datasets/' + options['data_set'] + '/' + options['file'])
     headers = options['data_headers'].split(',')
     protected = options['protected']
@@ -45,6 +45,7 @@ def load_problem(options):
     weight_res = int(options['weight_res'])
     gamma_res = int(options['gamma_res'])
     test_size = float(options['test_size'])
+    num_of_tries = int(options['num_of_tries'])
     filters = options['filters']
 
     headers_integer_values = options['headers_integer_values']
@@ -73,15 +74,20 @@ def load_problem(options):
         fn=fn,
         weight_res=weight_res,
         gamma_res=gamma_res,
-        test_size=test_size
+        test_size=test_size,
+        num_of_tries=num_of_tries
     )
 
 
-def main(options_file):
-    options = json.load(open(options_file))
-    problem = load_problem(options)
-    solve.fairness(problem)
+def main(options):
+    if options.endswith('json'):
+        options_file = json.load(open(options))
+        problem = load_problem_from_options(options_file)
+    else:
+        epsilon = float(options)
+        problem = create_synthetic_problem(epsilon)
 
+    solve.fairness(problem)
 
 if __name__ == "__main__":
     main(sys.argv[1])

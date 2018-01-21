@@ -8,15 +8,16 @@ class FairnessProblem:
                  x,
                  y,
                  protected_index,
-                 gamma_gt,
-                 gamma_lt,
-                 weight_gt,
-                 weight_lt,
-                 fp,
-                 fn,
-                 weight_res,
-                 gamma_res,
-                 test_size
+                 gamma_gt=0,
+                 gamma_lt=2,
+                 weight_gt=0,
+                 weight_lt=100,
+                 fp=True,
+                 fn=True,
+                 weight_res=6,
+                 gamma_res=7,
+                 test_size=0.33,
+                 num_of_tries=5
                  ):
         self.description = description
         self.protected_index = protected_index
@@ -31,7 +32,7 @@ class FairnessProblem:
         self.test_size = test_size
         self.X = np.array(x)
         self.Y = np.array(y)
-
+        self.num_of_tries = num_of_tries
 
 class Results:
     def __init__(self, w, ll, fnr_relaxed_diff, fpr_relaxed_diff, objective):
@@ -82,4 +83,26 @@ def measures(y, y_hat):
     neg = np.sum(_1 - y)
 
     return {'fpr': fp/neg, 'fnr': fn/pos, 'tpr': tp/pos, 'tnr': tn/neg, 'acc': (tn + tp)/y.shape[0]}
+
+
+def create_synthetic_problem(epsilon=0.125):
+    print("epsilon: " + str(epsilon))
+
+    x = list()
+    y = list()
+    for i in range(5000):
+        new_x = list()
+        new_y = np.random.randint(2)
+        x_0 = new_y if np.random.rand() > epsilon else 1 - new_y
+        x_1 = new_y if np.random.rand() > 2*epsilon else 1 - new_y
+        new_x.append(x_0)
+        new_x.append(x_1)
+        y.append(new_y)
+        x.append(new_x)
+    return FairnessProblem(
+        description="synthetic data with epsilon: " + str(epsilon),
+        x=x,
+        y=y,
+        protected_index=1
+    )
 
