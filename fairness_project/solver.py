@@ -8,17 +8,18 @@ from fairness_data import *
 
 
 def plot_theta(x, results, _type):
-    num_of_results = len(results)
+    num_of_results = min([len(results), 4])
     fig = plt.figure(figsize=(5*num_of_results, 5))
     num_of_plots = 100 + 10*num_of_results
     for i in range(num_of_results):
         plot_num = num_of_plots + (1 + i)
         sub = fig.add_subplot(plot_num)
 
-        sub.set_ylim([-1, 2])
-        sub.set_xlim([-1, 2])
-        sub.set_title(str(results[i]['weight']))
-        w = results[i]['train_results']['w']
+        step = int((i*(len(results))-1)/(num_of_results-1))
+        sub.set_ylim([-0.5, 1.5])
+        sub.set_xlim([-0.5, 1.5])
+        sub.set_title(str(results[step]['weight']))
+        w = results[step]['train_results']['w']
         xp = np.linspace(-1, 2, 100).reshape(-1, 1)
         yp = -(w[1, 0]/w[2, 0]*xp) - w[0, 0]/w[2, 0]
         sub.plot(x[:, 1], x[:, 2], 'ro')
