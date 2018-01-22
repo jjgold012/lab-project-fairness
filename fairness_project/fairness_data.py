@@ -14,7 +14,7 @@ class FairnessProblem:
                  weight_lt=150,
                  fp=True,
                  fn=True,
-                 weight_res=4,
+                 weight_res=3,
                  gamma_res=1,
                  test_size=0.33,
                  num_of_tries=5
