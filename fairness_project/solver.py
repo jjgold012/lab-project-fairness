@@ -7,7 +7,32 @@ from fairness_data import *
 # import gurobipy
 
 
-def plot_results(subplot, results, type):
+def plot_theta(x, results, _type):
+    num_of_results = len(results)
+    fig = plt.figure(figsize=(5*num_of_results, 5))
+    num_of_plots = 100 + 10*num_of_results
+    for i in range(num_of_results):
+        plot_num = num_of_plots + (1 + i)
+        sub = fig.add_subplot(plot_num)
+
+        sub.set_ylim([-1, 2])
+        sub.set_xlim([-1, 2])
+        sub.set_title(str(results[i]['weight']))
+        w = results[i]['train_results']['w']
+        xp = np.linspace(-1, 2, 100).reshape(-1, 1)
+        yp = -(w[1, 0]/w[2, 0]*xp) - w[0, 0]/w[2, 0]
+        sub.plot(x[:, 1], x[:, 2], 'ro')
+        sub.plot(xp, yp, 'k')
+
+    plt.suptitle(_type)
+
+
+def show_theta(x, results_squared, results_abs):
+    plot_theta(x, results_squared, _type='Squared')
+    plot_theta(x, results_abs, _type='ABS')
+
+
+def plot_results(subplot, results, _type):
     weights = [r['weight'] for r in results]
     acc = [r['test_measures']['acc'] for r in results]
     fnr_diff = [r['test_measures']['fnr_diff'] for r in results]
@@ -16,7 +41,7 @@ def plot_results(subplot, results, type):
     r_fpr_diff = [r['test_results']['fpr_diff'] for r in results]
     subplot.set_autoscaley_on(False)
     subplot.set_ylim([0, 1])
-    subplot.set_title(type)
+    subplot.set_title(_type)
     subplot.plot(weights, acc, 'r-', label="Accuracy", linewidth=1)
     subplot.plot(weights, fnr_diff, 'g-', label="FNR diff", linewidth=1)
     subplot.plot(weights, r_fnr_diff, 'g--', label="relaxed FNR diff", linewidth=1)
@@ -32,13 +57,12 @@ def show_results(results_squared, results_abs):
     print('\nThe result for squared relaxation:\n')
     pprint(results_squared)
     sub1 = fig.add_subplot(121)
-    plot_results(sub1, results_squared, type='Squared')
+    plot_results(sub1, results_squared, _type='Squared')
 
     print('\nThe result for absolute value relaxation:\n')
     pprint(results_abs)
     sub2 = fig.add_subplot(122)
-    plot_results(sub2, results_abs, type='Absolute value')
-    plt.show()
+    plot_results(sub2, results_abs, _type='Absolute value')
 
 
 def sigmoid(x):
@@ -133,7 +157,7 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
     }
 
 
-def fairness(problem):
+def fairness(problem, synthetic=False):
     print('\nStart\n')
 
     x = problem.X
@@ -192,8 +216,12 @@ def fairness(problem):
         print("Squared best gamma: " + str(best_squared['gamma']))
         print("ABS best gamma: " + str(best_abs['gamma']))
 
+
     print(problem.description)
     show_results(results_squared, results_abs)
+    if synthetic:
+        show_theta(x, results_squared, results_abs)
+    plt.show()
 
 
 

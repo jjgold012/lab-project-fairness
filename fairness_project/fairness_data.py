@@ -9,13 +9,13 @@ class FairnessProblem:
                  y,
                  protected_index,
                  gamma_gt=0,
-                 gamma_lt=2,
+                 gamma_lt=4,
                  weight_gt=0,
-                 weight_lt=100,
+                 weight_lt=150,
                  fp=True,
                  fn=True,
-                 weight_res=6,
-                 gamma_res=7,
+                 weight_res=4,
+                 gamma_res=1,
                  test_size=0.33,
                  num_of_tries=5
                  ):
@@ -33,6 +33,7 @@ class FairnessProblem:
         self.X = np.array(x)
         self.Y = np.array(y)
         self.num_of_tries = num_of_tries
+
 
 class Results:
     def __init__(self, w, ll, fnr_relaxed_diff, fpr_relaxed_diff, objective):
@@ -92,11 +93,13 @@ def create_synthetic_problem(epsilon=0.125):
     y = list()
     for i in range(5000):
         new_x = list()
-        new_y = np.random.randint(2)
-        x_0 = new_y if np.random.rand() > epsilon else 1 - new_y
-        x_1 = new_y if np.random.rand() > 2*epsilon else 1 - new_y
-        new_x.append(x_0)
+        new_y = float(np.random.randint(2))
+        x_1 = new_y if np.random.rand() >= epsilon else 1 - new_y
+        x_2 = new_y if np.random.rand() >= 2*epsilon else 1 - new_y
+
+        new_x.append(1.)
         new_x.append(x_1)
+        new_x.append(x_2)
         y.append(new_y)
         x.append(new_x)
     return FairnessProblem(

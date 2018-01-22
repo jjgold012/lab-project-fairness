@@ -80,14 +80,16 @@ def load_problem_from_options(options):
 
 
 def main(options):
+    synthetic = False
     if options.endswith('json'):
         options_file = json.load(open(options))
         problem = load_problem_from_options(options_file)
     else:
         epsilon = float(options)
         problem = create_synthetic_problem(epsilon)
+        synthetic = True
 
-    solve.fairness(problem)
+    solve.fairness(problem, synthetic)
 
 if __name__ == "__main__":
     main(sys.argv[1])
