@@ -25,6 +25,11 @@ The ```default``` dataset can be run in a similar way:
 python3 fairness_project/start.py fairness_project/options/default.json
 ```
 
+In order to rub the project with synthetic data run:
+```
+python3 fairness_project/start.py <epsilon>
+```
+
 ### Results
 The outputs results can be seen in the ```results``` folder.
 
