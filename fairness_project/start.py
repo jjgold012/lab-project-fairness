@@ -58,7 +58,9 @@ def load_problem_from_options(options):
     for line in file_reader:
         processed_line = process_line(filters, headers_integer_values, line)
         if processed_line:
-            x.append([float(processed_line[h]) for h in headers])
+            line_data = [float(processed_line[h]) for h in headers]
+            line_data.append(1.)
+            x.append(line_data)
             y.append(int(processed_line[tag]))
 
     return FairnessProblem(

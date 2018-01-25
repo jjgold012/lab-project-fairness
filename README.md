@@ -34,3 +34,11 @@ python3 fairness_project/start.py <epsilon>
 The outputs results can be seen in the ```results``` folder.
 
 ** The ```default``` data set result are with train set size of 20% because the dataset is quite large and it ran for a long time.
+
+
+1. compas dataset with both weights
+2. adult dataset with both weights
+3. default dataset with both weights
+4. compas dataset with one weights
+5. adult dataset with one weights
+6. default dataset with one weights

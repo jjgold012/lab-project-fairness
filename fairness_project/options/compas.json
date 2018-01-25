@@ -9,7 +9,7 @@
   "fn":           true,
   "weight":       {"gt": 0, "lt": 400},
   "weight_res":   21,
-  "gamma":        {"gt": 0, "lt": 1},
+  "gamma":        {"gt": 0, "lt": 10},
   "gamma_res":    5,
   "test_size":    0.33,
   "num_of_tries": 5,

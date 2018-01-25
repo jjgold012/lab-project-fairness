@@ -44,28 +44,28 @@ def plot_results(subplot, results, _type):
     r_fpr_diff = [r['test_results']['fpr_diff'] for r in results]
     subplot.set_autoscaley_on(False)
     subplot.set_ylim([0, 1])
-    subplot.set_title(_type)
-    subplot.plot(weights, acc, 'r-', label="Accuracy", linewidth=1)
-    subplot.plot(weights, fnr_diff, 'g-', label="FNR diff", linewidth=1)
-    subplot.plot(weights, r_fnr_diff, 'g--', label="relaxed FNR diff", linewidth=1)
-    subplot.plot(weights, fpr_diff, 'b-', label="FPR diff", linewidth=1)
-    subplot.plot(weights, r_fpr_diff, 'b--', label="relaxed FPR diff", linewidth=1)
-    subplot.set_xlabel('Fairness weight')
+    subplot.plot(weights, acc, 'r-', label="Accuracy", linewidth=3)
+    subplot.plot(weights, fpr_diff, 'b-', label="FPR Difference", linewidth=3)
+    subplot.plot(weights, r_fpr_diff, 'b--', label="Relaxed FPR Diff.", linewidth=3)
+    subplot.plot(weights, fnr_diff, 'g-', label="FNR Difference", linewidth=3)
+    subplot.plot(weights, r_fnr_diff, 'g--', label="Relaxed FNR Diff.", linewidth=3)
+
+    subplot.set_xlabel('Fairness Penalizers Weight')
     subplot.set_ylabel('Rate')
     subplot.legend(loc='best', prop={'size':11}, ncol=1)
 
 
 def show_results(results_squared, results_abs):
     fig = plt.figure(figsize=(10, 5))
-    print('\nThe result for squared relaxation:\n')
-    pprint(results_squared)
-    sub1 = fig.add_subplot(121)
-    plot_results(sub1, results_squared, _type='Squared')
-
     print('\nThe result for absolute value relaxation:\n')
     pprint(results_abs)
+    sub1 = fig.add_subplot(121)
+    plot_results(sub1, results_abs, _type='Absolute value')
+
+    print('\nThe result for squared relaxation:\n')
+    pprint(results_squared)
     sub2 = fig.add_subplot(122)
-    plot_results(sub2, results_abs, _type='Absolute value')
+    plot_results(sub2, results_squared, _type='Squared')
 
 
 def sigmoid(x):
