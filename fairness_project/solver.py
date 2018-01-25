@@ -19,13 +19,15 @@ def plot_theta(x, results, _type):
         sub.set_ylim([-0.5, 1.5])
         sub.set_xlim([-0.5, 1.5])
         sub.set_title(str(results[step]['weight']))
+        sub.set_xlabel('A')
+        sub.set_ylabel('X')
         w = results[step]['train_results']['w']
         xp = np.linspace(-1, 2, 100).reshape(-1, 1)
         yp = -(w[1, 0]/w[2, 0]*xp) - w[0, 0]/w[2, 0]
         sub.plot(x[:, 1], x[:, 2], 'ro')
         sub.plot(xp, yp, 'k')
 
-    plt.suptitle(_type)
+    # plt.suptitle(_type)
 
 
 def show_theta(x, results_squared, results_abs):

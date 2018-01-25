@@ -11,10 +11,10 @@ class FairnessProblem:
                  gamma_gt=0,
                  gamma_lt=4,
                  weight_gt=0,
-                 weight_lt=150,
+                 weight_lt=1200,
                  fp=True,
                  fn=True,
-                 weight_res=3,
+                 weight_res=4,
                  gamma_res=1,
                  test_size=0.33,
                  num_of_tries=5
