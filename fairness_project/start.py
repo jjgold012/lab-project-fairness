@@ -77,7 +77,8 @@ def load_problem_from_options(options):
         weight_res=weight_res,
         gamma_res=gamma_res,
         test_size=test_size,
-        num_of_tries=num_of_tries
+        num_of_tries=num_of_tries,
+        original_options=options
     )
 
 

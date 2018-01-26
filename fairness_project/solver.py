@@ -14,18 +14,21 @@ def plot_theta(x, results, _type):
     for i in range(num_of_results):
         plot_num = num_of_plots + (1 + i)
         sub = fig.add_subplot(plot_num)
-
+        fig.canvas.set_window_title(_type)
         step = int((i*(len(results))-1)/(num_of_results-1))
         sub.set_ylim([-0.5, 1.5])
         sub.set_xlim([-0.5, 1.5])
         sub.set_title(str(results[step]['weight']))
-        sub.set_xlabel('A')
-        sub.set_ylabel('X')
+        sub.set_xlabel('A', fontweight='bold')
+        sub.set_ylabel('X', fontweight='bold')
         w = results[step]['train_results']['w']
-        xp = np.linspace(-1, 2, 100).reshape(-1, 1)
-        yp = -(w[1, 0]/w[2, 0]*xp) - w[0, 0]/w[2, 0]
-        sub.plot(x[:, 1], x[:, 2], 'ro')
+        xp = np.linspace(-1, 2, 100)
+        yp = -(w[0, 0]/w[1, 0]*xp) - w[2, 0]/w[1, 0]
         sub.plot(xp, yp, 'k')
+        sub.fill_between(xp, yp, 1.5, interpolate=True, color='blue', alpha='0.5')
+        sub.fill_between(xp, -0.5, yp, interpolate=True, color='red', alpha='0.5')
+
+        sub.plot(x[:, 0], x[:, 1], 'o', color='black')
 
     # plt.suptitle(_type)
 
@@ -44,12 +47,12 @@ def plot_results(subplot, results, _type):
     r_fpr_diff = [r['test_results']['fpr_diff'] for r in results]
     subplot.set_autoscaley_on(False)
     subplot.set_ylim([0, 1])
-    subplot.plot(weights, acc, 'r-', label="Accuracy", linewidth=3)
-    subplot.plot(weights, fpr_diff, 'b-', label="FPR Difference", linewidth=3)
-    subplot.plot(weights, r_fpr_diff, 'b--', label="Relaxed FPR Diff.", linewidth=3)
-    subplot.plot(weights, fnr_diff, 'g-', label="FNR Difference", linewidth=3)
-    subplot.plot(weights, r_fnr_diff, 'g--', label="Relaxed FNR Diff.", linewidth=3)
-
+    subplot.plot(weights, acc, 'r-', label="Accuracy", linewidth=2)
+    subplot.plot(weights, fpr_diff, 'b-', label="FPR Difference", linewidth=2)
+    subplot.plot(weights, r_fpr_diff, 'b--', label="Relaxed FPR Diff.", linewidth=2)
+    subplot.plot(weights, fnr_diff, 'g-', label="FNR Difference", linewidth=2)
+    subplot.plot(weights, r_fnr_diff, 'g--', label="Relaxed FNR Diff.", linewidth=2)
+    subplot.set_title(_type)
     subplot.set_xlabel('Fairness Penalizers Weight')
     subplot.set_ylabel('Rate')
     subplot.legend(loc='best', prop={'size':11}, ncol=1)
@@ -60,7 +63,7 @@ def show_results(results_squared, results_abs):
     print('\nThe result for absolute value relaxation:\n')
     pprint(results_abs)
     sub1 = fig.add_subplot(121)
-    plot_results(sub1, results_abs, _type='Absolute value')
+    plot_results(sub1, results_abs, _type='Absolute Value')
 
     print('\nThe result for squared relaxation:\n')
     pprint(results_squared)
@@ -219,8 +222,7 @@ def fairness(problem, synthetic=False):
         print("Squared best gamma: " + str(best_squared['gamma']))
         print("ABS best gamma: " + str(best_abs['gamma']))
 
-
-    print(problem.description)
+    pprint(problem.original_options)
     show_results(results_squared, results_abs)
     if synthetic:
         show_theta(x, results_squared, results_abs)

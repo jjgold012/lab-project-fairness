@@ -7,10 +7,10 @@
   "tag":          "class",
   "fp":           true,
   "fn":           false,
-  "weight":       {"gt": 0, "lt": 800},
+  "weight":       {"gt": 0, "lt": 1200},
   "weight_res":   21,
-  "gamma":        {"gt": 0, "lt": 100},
-  "gamma_res":    21,
+  "gamma":        {"gt": 0, "lt": 5},
+  "gamma_res":    11,
   "test_size":    0.80,
   "num_of_tries": 10,
 
