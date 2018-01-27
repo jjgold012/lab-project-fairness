@@ -115,7 +115,6 @@ def measure_relaxed_results(x_test, y_test, protected_index, w, fp_weight, fn_we
     else:
         fpr_diff = np.abs(diff_neg.dot(w))
         fnr_diff = np.abs(diff_pos.dot(w))
-    w_norm_square = np.sum(np.square(w))
     return {
         'll': log_likelihood,
         'fnr_diff': fnr_diff,
@@ -152,7 +151,7 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
                             gamma*w_norm_square)
 
     p = cp.Problem(objective)
-    p.solve(solver='ECOS', verbose=False)
+    p.solve(solver='ECOS', verbose=False, max_iters=400)
 
     return {
         'w': w.value,
@@ -203,15 +202,22 @@ def fairness(problem, synthetic=False):
                 gamma_result_squared[key1] = dict()
                 gamma_result_abs[key1] = dict()
                 for key2 in temp_res_squared[0][key1].keys():
+                    squared_all = np.array([r[key1][key2] for r in temp_res_squared])
+                    abs_all = np.array([r[key1][key2] for r in temp_res_abs])
                     if key2 == 'w':
-                        gamma_result_squared[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_squared]), axis=0)
-                        gamma_result_abs[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_abs]), axis=0)
+                        gamma_result_squared[key1][key2] = np.average(squared_all, axis=0)
+                        gamma_result_abs[key1][key2] = np.average(abs_all, axis=0)
                     else:
-                        gamma_result_squared[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_squared]))
-                        gamma_result_abs[key1][key2] = np.average(np.array([r[key1][key2] for r in temp_res_abs]))
+                        gamma_result_squared[key1][key2] = np.average(squared_all)
+                        gamma_result_abs[key1][key2] = np.average(abs_all)
 
             res_squared.append(gamma_result_squared)
             res_abs.append(gamma_result_abs)
+            # temp_res_squared[0]['gamma'] = gamma
+            # temp_res_abs[0]['gamma'] = gamma
+            # res_squared.append(temp_res_squared[0])
+            # res_abs.append(temp_res_abs[0])
+
 
         best_squared = res_squared[np.array([r['test_results']['objective'] for r in res_squared]).argmin()]
         best_abs = res_abs[np.array([r['test_results']['objective'] for r in res_abs]).argmin()]
@@ -219,8 +225,8 @@ def fairness(problem, synthetic=False):
         best_abs['weight'] = weight
         results_squared.append(best_squared)
         results_abs.append(best_abs)
-        print("Squared best gamma: " + str(best_squared['gamma']))
-        print("ABS best gamma: " + str(best_abs['gamma']))
+        print("\nSquared best gamma: " + str(best_squared['gamma']) + "\n")
+        print("\nABS best gamma: " + str(best_abs['gamma']) + "\n")
 
     pprint(problem.original_options)
     show_results(results_squared, results_abs)

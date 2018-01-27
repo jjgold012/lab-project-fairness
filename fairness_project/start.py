@@ -7,7 +7,7 @@ from fairness_data import *
 import solver as solve
 
 
-def process_line(filters, headers_integer_values, line):
+def process_line(filters, headers_integer_values, headers_operation, line):
     for f in filters:
         if f.get('values', None):
             if line[f['header']] in f['values']:
@@ -27,6 +27,10 @@ def process_line(filters, headers_integer_values, line):
         if line[h['header']] not in h.keys():
             return
         line_copy[h['header']] = h[line[h['header']]]
+
+    for o in headers_operation:
+        if o.get('divide', None):
+            line_copy[o['header']] = float(line[o['header']])/float(o['divide'])
 
     return line_copy
 
@@ -49,14 +53,14 @@ def load_problem_from_options(options):
     filters = options['filters']
 
     headers_integer_values = options['headers_integer_values']
-
+    headers_operation = options['headers_operation']
     file_reader = DictReader(data_file)
 
     protected_index = headers.index(protected)
     x = []
     y = []
     for line in file_reader:
-        processed_line = process_line(filters, headers_integer_values, line)
+        processed_line = process_line(filters, headers_integer_values, headers_operation, line)
         if processed_line:
             line_data = [float(processed_line[h]) for h in headers]
             line_data.append(1.)

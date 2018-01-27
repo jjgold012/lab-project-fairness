@@ -2,17 +2,17 @@
   "description":  "adult dataset with protected value gender",
   "data_set":     "adult-dataset",
   "file":         "adult.csv",
-  "data_headers": "age,workclass,fnlwgt,education-num,marital-status,occupation,relationship,race,sex,capital-gain,capital-loss,hours-per-week,native-country",
+  "data_headers": "age,workclass,education-num,marital-status,occupation,relationship,race,sex,hours-per-week,native-country",
   "protected":    "sex",
   "tag":          "class",
   "fp":           true,
-  "fn":           false,
-  "weight":       {"gt": 0, "lt": 1200},
-  "weight_res":   21,
-  "gamma":        {"gt": 0, "lt": 5},
-  "gamma_res":    11,
+  "fn":           true,
+  "weight":       {"gt": 0, "lt": 400},
+  "weight_res":   11,
+  "gamma":        {"gt": 0, "lt": 1},
+  "gamma_res":    2,
   "test_size":    0.80,
-  "num_of_tries": 10,
+  "num_of_tries": 20,
 
   "filters": [
     {
@@ -139,5 +139,9 @@
       "Vietnam": 39,
       "Yugoslavia": 40
     }
+  ],
+
+  "headers_operation": [
+
   ]
 }
