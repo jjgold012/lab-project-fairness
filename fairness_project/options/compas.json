@@ -6,12 +6,12 @@
   "protected":    "race",
   "tag":          "is_recid",
   "fp":           true,
-  "fn":           true,
+  "fn":           false,
   "weight":       {"gt": 0, "lt": 400},
   "weight_res":   21,
   "gamma":        {"gt": 0, "lt": 10},
   "gamma_res":    21,
-  "test_size":    0.33,
+  "test_size":    0.50,
   "num_of_tries": 5,
 
   "filters": [
