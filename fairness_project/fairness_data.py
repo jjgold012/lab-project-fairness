@@ -14,6 +14,7 @@ class FairnessProblem:
                  weight_lt=1200,
                  fp=True,
                  fn=True,
+                 objective_weight=1,
                  weight_res=4,
                  gamma_res=1,
                  test_size=0.33,
@@ -26,6 +27,7 @@ class FairnessProblem:
         self.weight_lt = weight_lt
         self.fp = fp
         self.fn = fn
+        self.objective_weight = objective_weight
         self.gamma_gt = gamma_gt
         self.gamma_lt = gamma_lt
         self.weight_res = weight_res

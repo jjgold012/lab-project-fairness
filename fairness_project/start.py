@@ -42,6 +42,7 @@ def load_problem_from_options(options):
     tag = options['tag']
     fp = bool(options['fp'])
     fn = bool(options['fn'])
+    objective_weight = float(options['objective_weight'])
     weight_gt = float(options['weight']['gt'])
     weight_lt = float(options['weight']['lt'])
     gamma_gt = float(options['gamma']['gt'])
@@ -78,6 +79,7 @@ def load_problem_from_options(options):
         weight_lt=weight_lt,
         fp=fp,
         fn=fn,
+        objective_weight=objective_weight,
         weight_res=weight_res,
         gamma_res=gamma_res,
         test_size=test_size,

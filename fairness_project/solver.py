@@ -64,18 +64,26 @@ def show_results(results_squared, results_abs):
     pprint(results_abs)
     sub1 = fig.add_subplot(121)
     plot_results(sub1, results_abs, _type='Absolute Value')
+    print('\n--------------Best Values for Objective absolute value relaxation---------------\n')
+    best_abs = results_abs[np.array([r['test_measures']['objective'] for r in results_abs]).argmin()]
+    pprint(best_abs)
+    print('\n')
 
     print('\nThe result for squared relaxation:\n')
     pprint(results_squared)
     sub2 = fig.add_subplot(122)
     plot_results(sub2, results_squared, _type='Squared')
+    print('\n--------------Best Values for Objective squared relaxation---------------\n')
+    best_squared = results_squared[np.array([r['test_measures']['objective'] for r in results_squared]).argmin()]
+    pprint(best_squared)
+    print('\n')
 
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 
-def measure_objective_results(x_test, y_test, protected_index, w):
+def measure_objective_results(x_test, y_test, protected_index, fp, fn, objective_weight, w):
     y_hat = np.round(sigmoid(np.dot(x_test, w)))
     y_1, y_0 = np.array(split_by_protected_value(x_test, y_test, protected_index))[[1, 3]]
     y_1_hat, y_0_hat = np.array(split_by_protected_value(x_test, y_hat, protected_index))[[1, 3]]
@@ -92,7 +100,8 @@ def measure_objective_results(x_test, y_test, protected_index, w):
         '0_fpr': _0_measures['fpr'],
         '0_fnr': _0_measures['fnr'],
         'fpr_diff': fpr_diff,
-        'fnr_diff': fnr_diff
+        'fnr_diff': fnr_diff,
+        'objective': all_measures['acc'] + (objective_weight*fpr_diff if fp else 0) + (objective_weight*fnr_diff if fn else 0)
     }
 
 
@@ -183,14 +192,14 @@ def fairness(problem, synthetic=False):
                 try:
                     conv_squared = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
                     relaxed_squared = measure_relaxed_results(x_test, y_test, protected_index, conv_squared['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
-                    measures_squared = measure_objective_results(x_test, y_test, protected_index, conv_squared['w'])
+                    measures_squared = measure_objective_results(x_test, y_test, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_squared['w'])
                     temp_res_squared.append({'train_results': conv_squared, 'test_results': relaxed_squared, 'test_measures': measures_squared})
                 except:
                     pass
                 try:
                     conv_abs = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
                     relaxed_abs = measure_relaxed_results(x_test, y_test, protected_index, conv_abs['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
-                    measures_abs = measure_objective_results(x_test, y_test, protected_index, conv_abs['w'])
+                    measures_abs = measure_objective_results(x_test, y_test, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_abs['w'])
                     temp_res_abs.append({'train_results': conv_abs, 'test_results': relaxed_abs, 'test_measures': measures_abs})
                 except:
                     pass
@@ -217,7 +226,6 @@ def fairness(problem, synthetic=False):
             # temp_res_abs[0]['gamma'] = gamma
             # res_squared.append(temp_res_squared[0])
             # res_abs.append(temp_res_abs[0])
-
 
         best_squared = res_squared[np.array([r['test_results']['objective'] for r in res_squared]).argmin()]
         best_abs = res_abs[np.array([r['test_results']['objective'] for r in res_abs]).argmin()]
