@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from pprint import pprint
 from sklearn.model_selection import train_test_split
 from fairness_data import *
-# import gurobipy
 
 
 def plot_theta(x, results, _type):
@@ -67,16 +66,16 @@ def show_results(results_squared, results_abs):
     print('\n--------------Best Values for Objective absolute value relaxation---------------\n')
     best_abs = results_abs[np.array([r['test_measures']['objective'] for r in results_abs]).argmin()]
     pprint(best_abs)
-    print('\n')
+    print('----------------------------------------------------------------------------------\n')
 
     print('\nThe result for squared relaxation:\n')
     pprint(results_squared)
     sub2 = fig.add_subplot(122)
     plot_results(sub2, results_squared, _type='Squared')
-    print('\n--------------Best Values for Objective squared relaxation---------------\n')
+    print('\n--------------Best Values for Objective squared relaxation----------------------\n')
     best_squared = results_squared[np.array([r['test_measures']['objective'] for r in results_squared]).argmin()]
     pprint(best_squared)
-    print('\n')
+    print('----------------------------------------------------------------------------------\n')
 
 
 def sigmoid(x):
@@ -222,10 +221,6 @@ def fairness(problem, synthetic=False):
 
             res_squared.append(gamma_result_squared)
             res_abs.append(gamma_result_abs)
-            # temp_res_squared[0]['gamma'] = gamma
-            # temp_res_abs[0]['gamma'] = gamma
-            # res_squared.append(temp_res_squared[0])
-            # res_abs.append(temp_res_abs[0])
 
         best_squared = res_squared[np.array([r['test_results']['objective'] for r in res_squared]).argmin()]
         best_abs = res_abs[np.array([r['test_results']['objective'] for r in res_abs]).argmin()]
@@ -240,6 +235,7 @@ def fairness(problem, synthetic=False):
     show_results(results_squared, results_abs)
     if synthetic:
         show_theta(x, results_squared, results_abs)
+    print('Done')
     plt.show()
 
 
