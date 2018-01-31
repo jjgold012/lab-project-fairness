@@ -82,8 +82,8 @@ python fairness_project/start.py <epsilon>
 
 The synthetic data is generated like this
 1. Choose target value ```y``` randomly from ```{0,1}```.
-2. Choose ```x_0 = y``` with probability ```1 - <epsilon>``` else ```x_0 = 1 - y```
-3. Choose ```x_1 = y``` with probability ```1 - 2*<epsilon>``` else ```x_0 = 1 - y```
+2. Choose ```x_0 = y``` with probability ```1 - epsilon``` else ```x_0 = 1 - y```
+3. Choose ```x_1 = y``` with probability ```1 - 2*epsilon``` else ```x_0 = 1 - y```
 4. Run the problem with protected value ```x_0```
 
 ### Results
