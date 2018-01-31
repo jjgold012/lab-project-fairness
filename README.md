@@ -73,7 +73,7 @@ Or you can create your own option file:
 
 ```
 
-**Notice that the options ```json``` file can't contain any comments! because it will not parsed correctly if it does.
+** _Notice that the options ```json``` file can't contain any comments! because it will not parsed correctly if it does._
 
 In order to rub the project with synthetic data run:
 ```
@@ -89,6 +89,6 @@ The synthetic data is generated like this
 ### Results
 The outputs results can be seen in the ```results``` folder.
 
-** The ```default, adult, ucla-law-school``` data sets result are with train set size of 20% because the data set is quite large and it ran for a long time.
+** _The ```default, adult, ucla-law-school``` data sets result are with train set size of 20% because the data set is quite large and it ran for a long time._
 
 
