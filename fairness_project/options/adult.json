@@ -1,5 +1,5 @@
 {
-  "description":      "adult dataset with protected value gender",
+  "description":      "adult dataset with protected value sex",
   "data_set":         "adult-dataset",
   "file":             "adult.csv",
   "data_headers":     "age,workclass,education-num,marital-status,occupation,relationship,race,sex,hours-per-week,native-country",
@@ -12,7 +12,7 @@
   "weight_res":       11,
   "gamma":            {"gt": 0, "lt": 1},
   "gamma_res":        2,
-  "test_size":        0.80,
+  "train_size":       0.20,
   "num_of_tries":     20,
 
   "filters": [

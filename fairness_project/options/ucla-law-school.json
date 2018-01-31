@@ -1,60 +1,127 @@
 {
-  "description":      "",
+  "description":      "ucla law school dataset with protected value sex",
   "data_set":         "ucla-law-school-dataset",
   "file":             "lsac.csv",
-  "data_headers":     "decile1b,decile3,decile1,sex,race,cluster,lsat,ugpa,zfygpa,dob_yr,grad,zgpa,bar1,bar1_yr,bar2,bar2_yr,fulltime,fam_inc,age,gender,parttime,male,race1,race2,dropout,other,asian,black,hisp,pass_bar,bar,tier,index604,indxgrp,indxgrp2",
-  "protected":        "race",
-  "tag":              "is_recid",
-  "fp":               false,
+  "data_headers":     "decile1b,decile3,decile1,sex,race,cluster,lsat,ugpa,zfygpa,dob_yr,grad,zgpa,fulltime,fam_inc,parttime,tier,indxgrp2",
+  "protected":        "sex",
+  "tag":              "pass_bar",
+  "fp":               true,
   "fn":               true,
   "objective_weight": 1,
   "weight":           {"gt": 0, "lt": 400},
-  "weight_res":       21,
-  "gamma":            {"gt": 0, "lt": 10},
-  "gamma_res":        21,
-  "test_size":        0.50,
-  "num_of_tries":     5,
+  "weight_res":       11,
+  "gamma":            {"gt": 0, "lt": 5},
+  "gamma_res":        11,
+  "train_size":       0.20,
+  "num_of_tries":     10,
 
   "filters": [
     {
-      "header": "c_charge_degree",
-      "values": ["0"]
+      "header": "decile1b",
+      "values": ["", " "]
     },
     {
-      "header": "is_recid",
-      "values": ["-1"]
+      "header": "decile3",
+      "values": ["", " "]
     },
     {
-      "header": "score_text",
-      "values": ["N/A"]
+      "header": "decile1",
+      "values": ["", " "]
     },
     {
-      "header": "days_b_screening_arrest",
-      "values": [""],
-      "range": {
-        "type": "or",
-        "gt": 30,
-        "lt": -30
-      }
+      "header": "sex",
+      "values": ["", " "]
+    },
+    {
+      "header": "race",
+      "values": ["", " "]
+    },
+    {
+      "header": "cluster",
+      "values": ["", " "]
+    },
+    {
+      "header": "lsat",
+      "values": ["", " "]
+    },
+    {
+      "header": "ugpa",
+      "values": ["", " "]
+    },
+    {
+      "header": "zfygpa",
+      "values": ["", " "]
+    },
+    {
+      "header": "dob_yr",
+      "values": ["", " "]
+    },
+    {
+      "header": "grad",
+      "values": ["", " "]
+    },
+    {
+      "header": "zgpa",
+      "values": ["", " "]
+    },
+    {
+      "header": "fulltime",
+      "values": ["", " "]
+    },
+    {
+      "header": "fam_inc",
+      "values": ["", " "]
+    },
+    {
+      "header": "parttime",
+      "values": ["", " "]
+    },
+    {
+      "header": "bar",
+      "values": ["", " "]
+    },
+    {
+      "header": "tier",
+      "values": ["", " "]
+    },
+    {
+      "header": "indxgrp2",
+      "values": ["", " "]
     }
   ],
 
   "headers_integer_values": [
     {
       "header": "sex",
-      "Male": 0,
-      "Female": 1
+      "1": 0,
+      "2": 1
     },
     {
-      "header": "race",
-      "Caucasian": 0,
-      "African-American": 1
+      "header": "grad",
+      "N": 0,
+      "O": 1,
+      "X": 2,
+      "Y": 3
     },
     {
-      "header": "c_charge_degree",
-      "M": 0,
-      "F": 1
+      "header": "indxgrp2",
+      "a under 400": 0,
+      "b 400-460": 1,
+      "c 460-520": 2,
+      "d 520-580": 3,
+      "e 580-640": 4,
+      "f 640-700": 5,
+      "g 700-760": 6,
+      "h 760-820": 7,
+      "i 820+": 8
+    },
+    {
+      "header": "pass_bar",
+      "0": 0,
+      "1": 1,
+      "": 0
     }
+
   ],
   "headers_operation": []
 }

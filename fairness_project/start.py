@@ -35,7 +35,12 @@ def process_line(filters, headers_integer_values, headers_operation, line):
     return line_copy
 
 
-def load_problem_from_options(options):
+def load_problem_from_options(options_file):
+    file = open(options_file).read()
+    print('Setting up the problem according to this option file:')
+    print(file)
+    options = json.loads(file)
+
     data_file = open(os.path.dirname(__file__) + '/datasets/' + options['data_set'] + '/' + options['file'])
     headers = options['data_headers'].split(',')
     protected = options['protected']
@@ -49,7 +54,7 @@ def load_problem_from_options(options):
     gamma_lt = float(options['gamma']['lt'])
     weight_res = int(options['weight_res'])
     gamma_res = int(options['gamma_res'])
-    test_size = float(options['test_size'])
+    train_size = float(options['train_size'])
     num_of_tries = int(options['num_of_tries'])
     filters = options['filters']
 
@@ -60,14 +65,22 @@ def load_problem_from_options(options):
     protected_index = headers.index(protected)
     x = []
     y = []
+    number_of_lines = 0
+    positive_data = 0
     for line in file_reader:
+        number_of_lines += 1
         processed_line = process_line(filters, headers_integer_values, headers_operation, line)
         if processed_line:
             line_data = [float(processed_line[h]) for h in headers]
             line_data.append(1.)
             x.append(line_data)
-            y.append(int(processed_line[tag]))
+            line_tag = int(processed_line[tag])
+            y.append(line_tag)
+            if line_tag == 1:
+                positive_data += 1
 
+    print('\ndataset size: ' + str(number_of_lines) + '\ndataset used: ' + str(len(x)))
+    print('positive examples: ' + str(positive_data) + '\nnegative examples: ' + str(len(x) - positive_data) + '\n')
     return FairnessProblem(
         description=options['description'],
         x=x,
@@ -82,17 +95,16 @@ def load_problem_from_options(options):
         objective_weight=objective_weight,
         weight_res=weight_res,
         gamma_res=gamma_res,
-        test_size=test_size,
+        train_size=train_size,
         num_of_tries=num_of_tries,
-        original_options=options
+        original_options=file
     )
 
 
 def main(options):
     synthetic = False
     if options.endswith('json'):
-        options_file = json.load(open(options))
-        problem = load_problem_from_options(options_file)
+        problem = load_problem_from_options(options)
     else:
         epsilon = float(options)
         problem = create_synthetic_problem(epsilon)

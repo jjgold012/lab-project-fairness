@@ -17,7 +17,7 @@ class FairnessProblem:
                  objective_weight=1,
                  weight_res=4,
                  gamma_res=1,
-                 test_size=0.33,
+                 train_size=0.67,
                  num_of_tries=5,
                  original_options=None
                  ):
@@ -32,7 +32,7 @@ class FairnessProblem:
         self.gamma_lt = gamma_lt
         self.weight_res = weight_res
         self.gamma_res = gamma_res
-        self.test_size = test_size
+        self.train_size = train_size
         self.X = np.array(x)
         self.Y = np.array(y)
         self.num_of_tries = num_of_tries

@@ -59,20 +59,20 @@ def plot_results(subplot, results, _type):
 
 def show_results(results_squared, results_abs):
     fig = plt.figure(figsize=(10, 5))
-    print('\nThe result for absolute value relaxation:\n')
+    print('\n----------------The result for absolute value relaxation--------------------------\n')
     pprint(results_abs)
     sub1 = fig.add_subplot(121)
     plot_results(sub1, results_abs, _type='Absolute Value')
-    print('\n--------------Best Values for Objective absolute value relaxation---------------\n')
+    print('\n----------------Best Values for Objective absolute value relaxation---------------\n')
     best_abs = results_abs[np.array([r['test_measures']['objective'] for r in results_abs]).argmin()]
     pprint(best_abs)
     print('----------------------------------------------------------------------------------\n')
 
-    print('\nThe result for squared relaxation:\n')
+    print('\n----------------The result for squared relaxation---------------------------------\n')
     pprint(results_squared)
     sub2 = fig.add_subplot(122)
     plot_results(sub2, results_squared, _type='Squared')
-    print('\n--------------Best Values for Objective squared relaxation----------------------\n')
+    print('\n----------------Best Values for Objective squared relaxation----------------------\n')
     best_squared = results_squared[np.array([r['test_measures']['objective'] for r in results_squared]).argmin()]
     pprint(best_squared)
     print('----------------------------------------------------------------------------------\n')
@@ -187,7 +187,7 @@ def fairness(problem, synthetic=False):
             temp_res_squared = list()
             temp_res_abs = list()
             for j in range(problem.num_of_tries):
-                x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=problem.test_size, random_state=j)
+                x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=(1. - problem.train_size), random_state=j)
                 try:
                     conv_squared = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
                     relaxed_squared = measure_relaxed_results(x_test, y_test, protected_index, conv_squared['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
@@ -231,7 +231,7 @@ def fairness(problem, synthetic=False):
         print("\nSquared best gamma: " + str(best_squared['gamma']) + "\n")
         print("\nABS best gamma: " + str(best_abs['gamma']) + "\n")
 
-    pprint(problem.original_options)
+    print(problem.original_options)
     show_results(results_squared, results_abs)
     if synthetic:
         show_theta(x, results_squared, results_abs)
