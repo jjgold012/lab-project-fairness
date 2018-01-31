@@ -21,7 +21,7 @@ file from ```fairness_project/options/``` and Run
 python fairness_project/start.py fairness_project/options/<any options json file>
 ```
 
-Or you can create your own option file:
+Or you can create your own option file. Here's an example:
 ```
 {
   "description":      "compas dataset with protected value race",   #Description of the problem
