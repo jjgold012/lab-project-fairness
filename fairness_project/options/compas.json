@@ -6,7 +6,7 @@
   "protected":        "race",
   "tag":              "is_recid",
   "fp":               true,
-  "fn":               false,
+  "fn":               true,
   "objective_weight": 1,
   "weight":           {"gt": 0, "lt": 400},
   "weight_res":       21,

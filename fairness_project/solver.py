@@ -8,28 +8,25 @@ from fairness_data import *
 
 def plot_theta(x, results, _type):
     num_of_results = min([len(results), 4])
-    fig = plt.figure(figsize=(5*num_of_results, 5))
-    num_of_plots = 100 + 10*num_of_results
+    fig = plt.figure(figsize=(3.6*num_of_results, 3.5))
+    fig.subplots_adjust(wspace=0.5, bottom=0.25, left=0.1, right=0.95)
+    fig.canvas.set_window_title(_type)
+    results = [results[int(round(i))] for i in np.linspace(0, len(results) - 1, num_of_results)]
     for i in range(num_of_results):
-        plot_num = num_of_plots + (1 + i)
-        sub = fig.add_subplot(plot_num)
-        fig.canvas.set_window_title(_type)
-        step = int((i*(len(results))-1)/(num_of_results-1))
+        sub = fig.add_subplot(1, num_of_results, i + 1)
         sub.set_ylim([-0.5, 1.5])
         sub.set_xlim([-0.5, 1.5])
-        sub.set_title(str(results[step]['weight']))
+        sub.set_title(str(results[i]['weight']))
         sub.set_xlabel('A', fontweight='bold')
         sub.set_ylabel('X', fontweight='bold')
-        w = results[step]['train_results']['w']
+        w = results[i]['train_results']['w']
         xp = np.linspace(-1, 2, 100)
         yp = -(w[0, 0]/w[1, 0]*xp) - w[2, 0]/w[1, 0]
         sub.plot(xp, yp, 'k')
         sub.fill_between(xp, yp, 1.5, interpolate=True, color='blue', alpha='0.5')
         sub.fill_between(xp, -0.5, yp, interpolate=True, color='red', alpha='0.5')
-
         sub.plot(x[:, 0], x[:, 1], 'o', color='black')
 
-    # plt.suptitle(_type)
 
 
 def show_theta(x, results_squared, results_abs):

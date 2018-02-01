@@ -11,14 +11,14 @@ class FairnessProblem:
                  gamma_gt=0,
                  gamma_lt=4,
                  weight_gt=0,
-                 weight_lt=1200,
+                 weight_lt=400,
                  fp=True,
                  fn=True,
                  objective_weight=1,
                  weight_res=4,
                  gamma_res=1,
                  train_size=0.67,
-                 num_of_tries=5,
+                 num_of_tries=3,
                  original_options=None
                  ):
         self.description = description
