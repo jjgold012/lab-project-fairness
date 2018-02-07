@@ -12,7 +12,8 @@
   "weight_res":       11,
   "gamma":            {"gt": 0, "lt": 5},
   "gamma_res":        11,
-  "train_size":       0.20,
+  "test_size":        0.3,
+  "val_size":         0.50,
   "num_of_tries":     10,
 
   "filters": [

@@ -9,11 +9,12 @@
   "fn":               true,
   "objective_weight": 1,
   "weight":           {"gt": 0, "lt": 400},
-  "weight_res":       11,
+  "weight_res":       5,
   "gamma":            {"gt": 0, "lt": 1},
   "gamma_res":        2,
-  "train_size":       0.20,
-  "num_of_tries":     20,
+  "test_size":        0.7,
+  "val_size":         0.4,
+  "num_of_tries":     5,
 
   "filters": [
     {
