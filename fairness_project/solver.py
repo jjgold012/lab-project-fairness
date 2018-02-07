@@ -34,6 +34,7 @@ def show_theta(x, results_squared, results_abs):
 
 
 def plot_results(subplot, results, _type):
+
     weights = np.array([r['weight'] for r in results])
     acc = np.array([r['test_measures']['acc'] for r in results]).reshape(weights.shape)
     fnr_diff = np.array([r['test_measures']['fnr_diff'] for r in results]).reshape(weights.shape)
@@ -55,6 +56,7 @@ def plot_results(subplot, results, _type):
 
 def show_results(results_squared, results_abs):
     fig = plt.figure(figsize=(10, 5))
+    fig.subplots_adjust(top=0.9, bottom=0.25, left=0.1, right=0.9, hspace=0.2, wspace=0.25)
     print('\n----------------The result for absolute value relaxation--------------------------\n')
     pprint(results_abs)
     sub1 = fig.add_subplot(121)
@@ -67,6 +69,7 @@ def show_results(results_squared, results_abs):
     print('\n----------------The result for squared relaxation---------------------------------\n')
     pprint(results_squared)
     sub2 = fig.add_subplot(122)
+    fig.subplots_adjust(top=0.9, bottom=0.25, left=0.1, right=0.9, hspace=0.2, wspace=0.25)
     plot_results(sub2, results_squared, _type='Squared')
     print('\n----------------Best Values for Objective squared relaxation----------------------\n')
     best_squared = results_squared[np.array([r['train_measures']['objective'] for r in results_squared]).argmin()]
