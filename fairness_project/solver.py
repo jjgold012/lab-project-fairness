@@ -28,19 +28,18 @@ def plot_theta(x, results, _type):
         sub.plot(x[:, 0], x[:, 1], 'o', color='black')
 
 
-
 def show_theta(x, results_squared, results_abs):
     plot_theta(x, results_squared, _type='Squared')
     plot_theta(x, results_abs, _type='ABS')
 
 
 def plot_results(subplot, results, _type):
-    weights = [r['weight'] for r in results]
-    acc = [r['test_measures']['acc'] for r in results]
-    fnr_diff = [r['test_measures']['fnr_diff'] for r in results]
-    fpr_diff = [r['test_measures']['fpr_diff'] for r in results]
-    r_fnr_diff = [r['test_results']['fnr_diff'] for r in results]
-    r_fpr_diff = [r['test_results']['fpr_diff'] for r in results]
+    weights = np.array([r['weight'] for r in results])
+    acc = np.array([r['test_measures']['acc'] for r in results]).reshape(weights.shape)
+    fnr_diff = np.array([r['test_measures']['fnr_diff'] for r in results]).reshape(weights.shape)
+    fpr_diff = np.array([r['test_measures']['fpr_diff'] for r in results]).reshape(weights.shape)
+    r_fnr_diff = np.array([r['test_results']['fnr_diff'] for r in results]).reshape(weights.shape)
+    r_fpr_diff = np.array([r['test_results']['fpr_diff'] for r in results]).reshape(weights.shape)
     subplot.set_autoscaley_on(False)
     subplot.set_ylim([0, 1])
     subplot.plot(weights, acc, 'r-', label="Accuracy", linewidth=2)
@@ -61,7 +60,7 @@ def show_results(results_squared, results_abs):
     sub1 = fig.add_subplot(121)
     plot_results(sub1, results_abs, _type='Absolute Value')
     print('\n----------------Best Values for Objective absolute value relaxation---------------\n')
-    best_abs = results_abs[np.array([r['test_measures']['objective'] for r in results_abs]).argmin()]
+    best_abs = results_abs[np.array([r['train_measures']['objective'] for r in results_abs]).argmin()]
     pprint(best_abs)
     print('----------------------------------------------------------------------------------\n')
 
@@ -70,7 +69,7 @@ def show_results(results_squared, results_abs):
     sub2 = fig.add_subplot(122)
     plot_results(sub2, results_squared, _type='Squared')
     print('\n----------------Best Values for Objective squared relaxation----------------------\n')
-    best_squared = results_squared[np.array([r['test_measures']['objective'] for r in results_squared]).argmin()]
+    best_squared = results_squared[np.array([r['train_measures']['objective'] for r in results_squared]).argmin()]
     pprint(best_squared)
     print('----------------------------------------------------------------------------------\n')
 
@@ -97,7 +96,7 @@ def measure_objective_results(x_test, y_test, protected_index, fp, fn, objective
         '0_fnr': _0_measures['fnr'],
         'fpr_diff': fpr_diff,
         'fnr_diff': fnr_diff,
-        'objective': all_measures['acc'] + (objective_weight*fpr_diff if fp else 0) + (objective_weight*fnr_diff if fn else 0)
+        'objective': (1 - all_measures['acc']) + (objective_weight*fpr_diff if fp else 0) + (objective_weight*fnr_diff if fn else 0)
     }
 
 
@@ -163,7 +162,7 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
         'll': log_likelihood.value,
         'fnr_diff': fnr_diff.value,
         'fpr_diff': fpr_diff.value,
-        'objective': objective.value
+        'objective': -log_likelihood.value + fn_weight*fnr_diff.value + fp_weight*fpr_diff.value
     }
 
 
@@ -172,6 +171,7 @@ def fairness(problem, synthetic=False):
 
     x = problem.X
     y = problem.Y
+    x_train_all, x_test, y_train_all, y_test = train_test_split(x, y, test_size=problem.test_size, random_state=1)
     protected_index = problem.protected_index
     results_squared = list()
     results_abs = list()
@@ -184,19 +184,21 @@ def fairness(problem, synthetic=False):
             temp_res_squared = list()
             temp_res_abs = list()
             for j in range(problem.num_of_tries):
-                x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=(1. - problem.train_size), random_state=j)
+                x_train, x_val, y_train, y_val = train_test_split(x_train_all, y_train_all, test_size=problem.val_size, random_state=j)
                 try:
                     conv_squared = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
-                    relaxed_squared = measure_relaxed_results(x_test, y_test, protected_index, conv_squared['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
-                    measures_squared = measure_objective_results(x_test, y_test, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_squared['w'])
-                    temp_res_squared.append({'train_results': conv_squared, 'test_results': relaxed_squared, 'test_measures': measures_squared})
+                    measures_train_squared = measure_objective_results(x_train, y_train, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_squared['w'])
+                    relaxed_val_squared = measure_relaxed_results(x_val, y_val, protected_index, conv_squared['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
+                    measures_val_squared = measure_objective_results(x_val, y_val, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_squared['w'])
+                    temp_res_squared.append({'train_results': conv_squared, 'train_measures': measures_train_squared, 'val_results': relaxed_val_squared, 'val_measures': measures_val_squared})
                 except:
                     pass
                 try:
                     conv_abs = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
-                    relaxed_abs = measure_relaxed_results(x_test, y_test, protected_index, conv_abs['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
-                    measures_abs = measure_objective_results(x_test, y_test, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_abs['w'])
-                    temp_res_abs.append({'train_results': conv_abs, 'test_results': relaxed_abs, 'test_measures': measures_abs})
+                    measures_train_abs = measure_objective_results(x_train, y_train, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_abs['w'])
+                    relaxed_val_abs = measure_relaxed_results(x_val, y_val, protected_index, conv_abs['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
+                    measures_val_abs = measure_objective_results(x_val, y_val, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_abs['w'])
+                    temp_res_abs.append({'train_results': conv_abs, 'train_measures': measures_train_abs, 'val_results': relaxed_val_abs, 'val_measures': measures_val_abs})
                 except:
                     pass
             print("Squared -\tsuccess: " + str(len(temp_res_squared)) + "\t\tweight: " + str(weight) + "\t\tgamma: " + str(gamma))
@@ -219,10 +221,28 @@ def fairness(problem, synthetic=False):
             res_squared.append(gamma_result_squared)
             res_abs.append(gamma_result_abs)
 
-        best_squared = res_squared[np.array([r['test_results']['objective'] for r in res_squared]).argmin()]
-        best_abs = res_abs[np.array([r['test_results']['objective'] for r in res_abs]).argmin()]
-        best_squared['weight'] = weight
-        best_abs['weight'] = weight
+        best_squared = {'weight': weight, 'gamma': res_squared[np.array([r['val_measures']['objective'] for r in res_squared]).argmin()]['gamma']}
+
+        conv_squared = solve_convex(x_train_all, y_train_all, protected_index, best_squared['gamma'], fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
+        measures_train_squared = measure_objective_results(x_train_all, y_train_all, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_squared['w'])
+        relaxed_test_squared = measure_relaxed_results(x_test, y_test, protected_index, conv_squared['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
+        measures_test_squared = measure_objective_results(x_test, y_test, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_squared['w'])
+        best_squared['train_results'] = conv_squared
+        best_squared['train_measures'] = measures_train_squared
+        best_squared['test_results'] = relaxed_test_squared
+        best_squared['test_measures'] = measures_test_squared
+
+        best_abs = {'weight': weight, 'gamma': res_abs[np.array([r['val_measures']['objective'] for r in res_abs]).argmin()]['gamma']}
+
+        conv_abs = solve_convex(x_train_all, y_train_all, protected_index, best_abs['gamma'], fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
+        measures_train_abs = measure_objective_results(x_train_all, y_train_all, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_abs['w'])
+        relaxed_test_abs = measure_relaxed_results(x_test, y_test, protected_index, conv_abs['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
+        measures_test_abs = measure_objective_results(x_test, y_test, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_abs['w'])
+        best_abs['train_results'] = conv_abs
+        best_abs['train_measures'] = measures_train_abs
+        best_abs['test_results'] = relaxed_test_abs
+        best_abs['test_measures'] = measures_test_abs
+
         results_squared.append(best_squared)
         results_abs.append(best_abs)
         print("\nSquared best gamma: " + str(best_squared['gamma']) + "\n")

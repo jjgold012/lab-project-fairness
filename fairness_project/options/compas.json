@@ -4,15 +4,16 @@
   "file":             "compas-scores-two-years.csv",
   "data_headers":     "age,sex,race,priors_count,c_charge_degree",
   "protected":        "race",
-  "tag":              "is_recid",
+  "tag":              "two_year_recid",
   "fp":               true,
   "fn":               true,
   "objective_weight": 1,
   "weight":           {"gt": 0, "lt": 400},
-  "weight_res":       21,
-  "gamma":            {"gt": 0, "lt": 10},
-  "gamma_res":        11,
-  "train_size":       0.50,
+  "weight_res":       11,
+  "gamma":            {"gt": 0, "lt": 5},
+  "gamma_res":        1,
+  "test_size":        0.3,
+  "val_size":         0.50,
   "num_of_tries":     5,
 
   "filters": [
@@ -21,7 +22,7 @@
       "values": ["0"]
     },
     {
-      "header": "is_recid",
+      "header": "two_year_recid",
       "values": ["-1"]
     },
     {

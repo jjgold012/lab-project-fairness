@@ -54,7 +54,8 @@ def load_problem_from_options(options_file):
     gamma_lt = float(options['gamma']['lt'])
     weight_res = int(options['weight_res'])
     gamma_res = int(options['gamma_res'])
-    train_size = float(options['train_size'])
+    test_size = float(options['test_size'])
+    val_size = float(options['val_size'])
     num_of_tries = int(options['num_of_tries'])
     filters = options['filters']
 
@@ -95,7 +96,8 @@ def load_problem_from_options(options_file):
         objective_weight=objective_weight,
         weight_res=weight_res,
         gamma_res=gamma_res,
-        train_size=train_size,
+        test_size=test_size,
+        val_size=val_size,
         num_of_tries=num_of_tries,
         original_options=file
     )
