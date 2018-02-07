@@ -54,7 +54,7 @@ def plot_results(subplot, results, _type):
     subplot.legend(loc='best', prop={'size':11}, ncol=1)
 
 
-def show_results(results_squared, results_abs):
+def show_results(results_squared, results_abs, best_for_squared, best_for_abs):
     fig = plt.figure(figsize=(10, 5))
     fig.subplots_adjust(top=0.9, bottom=0.25, left=0.1, right=0.9, hspace=0.2, wspace=0.25)
     print('\n----------------The result for absolute value relaxation--------------------------\n')
@@ -62,8 +62,7 @@ def show_results(results_squared, results_abs):
     sub1 = fig.add_subplot(121)
     plot_results(sub1, results_abs, _type='Absolute Value')
     print('\n----------------Best Values for Objective absolute value relaxation---------------\n')
-    best_abs = results_abs[np.array([r['train_measures']['objective'] for r in results_abs]).argmin()]
-    pprint(best_abs)
+    pprint(best_for_abs)
     print('----------------------------------------------------------------------------------\n')
 
     print('\n----------------The result for squared relaxation---------------------------------\n')
@@ -72,8 +71,7 @@ def show_results(results_squared, results_abs):
     fig.subplots_adjust(top=0.9, bottom=0.25, left=0.1, right=0.9, hspace=0.2, wspace=0.25)
     plot_results(sub2, results_squared, _type='Squared')
     print('\n----------------Best Values for Objective squared relaxation----------------------\n')
-    best_squared = results_squared[np.array([r['train_measures']['objective'] for r in results_squared]).argmin()]
-    pprint(best_squared)
+    pprint(best_for_squared)
     print('----------------------------------------------------------------------------------\n')
 
 
@@ -171,32 +169,43 @@ def solve_convex(x, y, protected_index, gamma, fp_weight, fn_weight, squared=Tru
 
 def fairness(problem, synthetic=False):
     print('\nStart\n')
+    print(problem.original_options)
 
     x = problem.X
     y = problem.Y
     protected_index = problem.protected_index
-
-    for i in range(problem.num_of_tries):
+    gammas = np.linspace(problem.gamma_gt, problem.gamma_lt, num=problem.gamma_res)
+    weights = np.linspace(problem.weight_gt, problem.weight_lt, num=problem.weight_res)
+    measures_squared = list()
+    measures_abs = list()
+    measures_baseline = list()
+    for i in range(problem.num_of_runs):
+        x_train_all, x_test, y_train_all, y_test = train_test_split(x, y, test_size=problem.test_size, random_state=i)
         try:
-            x_train_all, x_test, y_train_all, y_test = train_test_split(x, y, test_size=problem.test_size, random_state=1)
             results_squared = list()
             results_abs = list()
-            for weight in np.linspace(problem.weight_gt, problem.weight_lt, num=problem.weight_res):
+            for weight in weights:
                 res_squared = list()
                 res_abs = list()
                 fp_weight = float(weight if problem.fp else 0)
                 fn_weight = float(weight if problem.fn else 0)
-                for gamma in np.linspace(problem.gamma_gt, problem.gamma_lt, num=problem.gamma_res):
-                    temp_res_squared = list()
-                    temp_res_abs = list()
-                    for j in range(problem.num_of_tries):
-                        x_train, x_val, y_train, y_val = train_test_split(x_train_all, y_train_all, test_size=problem.val_size, random_state=j)
+
+                temp_res_squared = dict()
+                temp_res_abs = dict()
+                for j in range(problem.num_of_folds):
+                    x_train, x_val, y_train, y_val = train_test_split(x_train_all, y_train_all, test_size=problem.val_size, random_state=j)
+                    for k in range(problem.gamma_res):
+                        if k not in temp_res_squared:
+                            temp_res_squared[k] = list()
+                        if k not in temp_res_abs:
+                            temp_res_abs[k] = list()
+                        gamma = gammas[k]
                         try:
                             conv_squared = solve_convex(x_train, y_train, protected_index, gamma, fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
                             measures_train_squared = measure_objective_results(x_train, y_train, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_squared['w'])
                             relaxed_val_squared = measure_relaxed_results(x_val, y_val, protected_index, conv_squared['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=True)
                             measures_val_squared = measure_objective_results(x_val, y_val, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_squared['w'])
-                            temp_res_squared.append({'train_results': conv_squared, 'train_measures': measures_train_squared, 'val_results': relaxed_val_squared, 'val_measures': measures_val_squared})
+                            temp_res_squared[k].append({'train_results': conv_squared, 'train_measures': measures_train_squared, 'val_results': relaxed_val_squared, 'val_measures': measures_val_squared})
                         except:
                             pass
                         try:
@@ -204,19 +213,19 @@ def fairness(problem, synthetic=False):
                             measures_train_abs = measure_objective_results(x_train, y_train, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_abs['w'])
                             relaxed_val_abs = measure_relaxed_results(x_val, y_val, protected_index, conv_abs['w'], fp_weight=fp_weight, fn_weight=fn_weight, squared=False)
                             measures_val_abs = measure_objective_results(x_val, y_val, protected_index, problem.fp, problem.fn, problem.objective_weight, conv_abs['w'])
-                            temp_res_abs.append({'train_results': conv_abs, 'train_measures': measures_train_abs, 'val_results': relaxed_val_abs, 'val_measures': measures_val_abs})
+                            temp_res_abs[k].append({'train_results': conv_abs, 'train_measures': measures_train_abs, 'val_results': relaxed_val_abs, 'val_measures': measures_val_abs})
                         except:
                             pass
-                    print("Squared -\tsuccess: " + str(len(temp_res_squared)) + "\t\tweight: " + str(weight) + "\t\tgamma: " + str(gamma))
-                    print("ABS -\t\tsuccess: " + str(len(temp_res_abs)) + "\t\tweight: " + str(weight) + "\t\tgamma: " + str(gamma))
+                for k in range(problem.gamma_res):
+                    gamma = gammas[k]
                     gamma_result_squared = {'gamma': gamma}
                     gamma_result_abs = {'gamma': gamma}
-                    for key1 in temp_res_squared[0].keys():
+                    for key1 in temp_res_squared[0][0].keys():
                         gamma_result_squared[key1] = dict()
                         gamma_result_abs[key1] = dict()
-                        for key2 in temp_res_squared[0][key1].keys():
-                            squared_all = np.array([r[key1][key2] for r in temp_res_squared])
-                            abs_all = np.array([r[key1][key2] for r in temp_res_abs])
+                        for key2 in temp_res_squared[0][0][key1].keys():
+                            squared_all = np.array([r[key1][key2] for r in temp_res_squared[k]])
+                            abs_all = np.array([r[key1][key2] for r in temp_res_abs[k]])
                             if key2 == 'w':
                                 gamma_result_squared[key1][key2] = np.average(squared_all, axis=0)
                                 gamma_result_abs[key1][key2] = np.average(abs_all, axis=0)
@@ -251,15 +260,40 @@ def fairness(problem, synthetic=False):
 
                 results_squared.append(best_squared)
                 results_abs.append(best_abs)
-                print("\nSquared best gamma: " + str(best_squared['gamma']) + "\n")
-                print("\nABS best gamma: " + str(best_abs['gamma']) + "\n")
+                print("\nSquared best gamma: " + str(best_squared['gamma']) + "for weight:" + str(weight))
+                print("\nABS best gamma: " + str(best_abs['gamma']) + "for weight:" + str(weight) + "\n")
 
-            print(problem.original_options)
-            show_results(results_squared, results_abs)
+            best_for_squared = results_squared[np.array([r['train_measures']['objective'] for r in results_squared]).argmin()]
+            best_for_abs = results_abs[np.array([r['train_measures']['objective'] for r in results_abs]).argmin()]
+            baseline = results_squared[0]
+            measures_squared.append({'acc': best_for_squared['test_measures']['acc'], 'fpr_diff': best_for_squared['test_measures']['fpr_diff'], 'fnr_diff': best_for_squared['test_measures']['fnr_diff']})
+            measures_abs.append({'acc': best_for_abs['test_measures']['acc'], 'fpr_diff': best_for_abs['test_measures']['fpr_diff'], 'fnr_diff': best_for_abs['test_measures']['fnr_diff']})
+            measures_baseline.append({'acc': baseline['test_measures']['acc'], 'fpr_diff': baseline['test_measures']['fpr_diff'], 'fnr_diff': baseline['test_measures']['fnr_diff']})
+
+            show_results(results_squared, results_abs, best_for_squared, best_for_abs)
             if synthetic:
                 show_theta(x, results_squared, results_abs)
             print('Done')
-            plt.show()
-            break
         except:
+            print('Failed run')
             pass
+
+    print('-----------------------------------------All runs-----------------------------------')
+    print('\nAll runs squared:\n')
+    pprint(measures_squared)
+    print('\nAll runs abs:\n')
+    pprint(measures_abs)
+    print('\nAll runs baseline:\n')
+    pprint(measures_baseline)
+    print('-----------------------------------------Average-----------------------------------')
+
+    for key1 in measures_squared[0].keys():
+        squared_all = np.array([r[key1] for r in measures_squared])
+        abs_all = np.array([r[key1] for r in measures_abs])
+        baseline_all = np.array([r[key1] for r in measures_baseline])
+        print('Average ' + key1 + ' for squared is: ' + str(np.average(squared_all)))
+        print('Average ' + key1 + ' for abs is: ' + str(np.average(abs_all)))
+        print('Average ' + key1 + ' for baseline is: ' + str(np.average(baseline_all)))
+
+    plt.show()
+

@@ -14,7 +14,8 @@
   "gamma_res":        2,
   "test_size":        0.7,
   "val_size":         0.4,
-  "num_of_tries":     5,
+  "num_of_folds":     5,
+  "num_of_runs":      3,
 
   "filters": [
     {

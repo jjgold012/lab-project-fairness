@@ -56,7 +56,9 @@ def load_problem_from_options(options_file):
     gamma_res = int(options['gamma_res'])
     test_size = float(options['test_size'])
     val_size = float(options['val_size'])
-    num_of_tries = int(options['num_of_tries'])
+    num_of_folds = int(options['num_of_folds'])
+    num_of_runs = int(options['num_of_runs'])
+
     filters = options['filters']
 
     headers_integer_values = options['headers_integer_values']
@@ -98,7 +100,8 @@ def load_problem_from_options(options_file):
         gamma_res=gamma_res,
         test_size=test_size,
         val_size=val_size,
-        num_of_tries=num_of_tries,
+        num_of_folds=num_of_folds,
+        num_of_runs=num_of_runs,
         original_options=file
     )
 

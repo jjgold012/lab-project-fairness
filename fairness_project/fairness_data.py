@@ -19,7 +19,8 @@ class FairnessProblem:
                  gamma_res=1,
                  test_size=0.3,
                  val_size=0.5,
-                 num_of_tries=3,
+                 num_of_runs=3,
+                 num_of_folds=3,
                  original_options=None
                  ):
         self.description = description
@@ -37,7 +38,8 @@ class FairnessProblem:
         self.val_size = val_size
         self.X = np.array(x)
         self.Y = np.array(y)
-        self.num_of_tries = num_of_tries
+        self.num_of_runs = num_of_runs
+        self.num_of_folds = num_of_folds
         self.original_options = original_options
 
 class Results:
