@@ -21,7 +21,7 @@ class FairnessProblem:
                  val_size=0.5,
                  num_of_runs=3,
                  num_of_folds=3,
-                 original_options=None
+                 original_options=""
                  ):
         self.description = description
         self.protected_index = protected_index
@@ -114,12 +114,19 @@ def create_synthetic_problem(epsilon=0.125):
 
         y.append(new_y)
         x.append(new_x)
-    description="synthetic data with epsilon: " + str(epsilon),
+    description = "synthetic data with epsilon: " + str(epsilon)
     return FairnessProblem(
         description=description,
         x=x,
         y=y,
         protected_index=0,
+        weight_gt=0,
+        weight_lt=600,
+        weight_res=4,
+        gamma_gt=0,
+        gamma_lt=0,
+        gamma_res=1,
+        num_of_folds=3,
         num_of_runs=1,
         original_options=description
     )

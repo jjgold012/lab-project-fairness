@@ -34,7 +34,6 @@ def show_theta(x, results_squared, results_abs):
 
 
 def plot_results(subplot, results, _type):
-
     weights = np.array([r['weight'] for r in results])
     acc = np.array([r['test_real_measures']['accuracy'] for r in results]).reshape(weights.shape)
     fnr_diff = np.array([r['test_real_measures']['fnr_diff'] for r in results]).reshape(weights.shape)
@@ -235,14 +234,14 @@ def solve_convex(problem, run_num):
                         solve_one_time_by_type(problem, x_train, y_train, x_val, y_val, gamma, weight, is_squared=True)
                     temp_results_squared[gamma_index].append(solution['test_real_measures'])
                 except:
-                    print('Squared:\tFailed for gamma: ' + str(gamma) + ", weight: " + str(weight))
+                    print('Squared:\tFailed for gamma: ' + str(gamma) + ", weight: " + str(weight) + '\n')
                     pass
                 try:
                     solution =\
                         solve_one_time_by_type(problem, x_train, y_train, x_val, y_val, gamma, weight, is_squared=False)
                     temp_results_abs[gamma_index].append(solution['test_real_measures'])
                 except:
-                    print('ABS:\t\tFailed for gamma: ' + str(gamma) + ", weight: " + str(weight))
+                    print('ABS:\t\tFailed for gamma: ' + str(gamma) + ", weight: " + str(weight) + '\n')
                     pass
 
         avg_results_squared = list()
@@ -259,22 +258,22 @@ def solve_convex(problem, run_num):
 
         argmin_gamma_squared = avg_results_squared[np.array([r['objective'] for r in avg_results_squared]).argmin()]['gamma']
         argmin_gamma_abs = avg_results_abs[np.array([r['objective'] for r in avg_results_abs]).argmin()]['gamma']
-        print("\nSquared:\tthe best gamma for weight: " + str(weight) + " is: " + str(argmin_gamma_squared))
-        print("ABS:\t\tthe best gamma for weight: " + str(weight) + " is: " + str(argmin_gamma_abs))
+        print('Squared:\tthe best gamma for weight: ' + str(weight) + ' is: ' + str(argmin_gamma_squared))
+        print('ABS:\t\tthe best gamma for weight: ' + str(weight) + ' is: ' + str(argmin_gamma_abs) + '\n')
 
         try:
             solution_squared =\
                 solve_one_time_by_type(problem, x_train_all, y_train_all, x_test, y_test, argmin_gamma_squared, weight, is_squared=True)
             results_squared.append(solution_squared)
         except:
-            print('Squared:\tFailed for weight: ' + str(weight))
+            print('Squared:\tFailed for weight: ' + str(weight) + '\n')
             pass
         try:
             solution_abs =\
                 solve_one_time_by_type(problem, x_train_all, y_train_all, x_test, y_test, argmin_gamma_abs, weight, is_squared=False)
             results_abs.append(solution_abs)
         except:
-            print('ABS:\t\tFailed for weight: ' + str(weight))
+            print('ABS:\t\tFailed for weight: ' + str(weight) + '\n')
             pass
 
     return results_squared, results_abs
