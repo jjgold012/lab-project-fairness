@@ -37,9 +37,11 @@ Or you can create your own option file. Here's an example:
   "weight_res":       21,                                           #The number of weights to test in the range 
   "gamma":            {"gt": 0, "lt": 10},                          #The regularization parameter (gamma) range
   "gamma_res":        11,                                           #The number of gamma to test in the range
-  "train_size":       0.50,                                         #The train size precentage from the entire data
-  "num_of_tries":     5,                                            #The number of times to check each weight,gamma combination
-
+  "test_size":        0.3,
+  "val_size":         0.50,
+  "num_of_folds":     5,
+  "num_of_runs":      5,
+  
   "filters": [                              #Filters to apply on the data set
     {
       "header": "c_charge_degree",          #Filter if the header is on of the values
@@ -83,7 +85,7 @@ python fairness_project/start.py <epsilon>
 The synthetic data is generated like this
 1. Choose target value ```y``` randomly from ```{0,1}```.
 2. Choose ```x_0 = y``` with probability ```1 - epsilon``` else ```x_0 = 1 - y```
-3. Choose ```x_1 = y``` with probability ```1 - 2*epsilon``` else ```x_0 = 1 - y```
+3. Choose ```x_1 = y``` with probability ```1 - 2*epsilon``` else ```x_1 = 1 - y```
 4. Run the problem with protected value ```x_0```
 
 ### Results
