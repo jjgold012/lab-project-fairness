@@ -5,17 +5,17 @@
   "data_headers":     "age,sex,race,priors_count,c_charge_degree",
   "protected":        "race",
   "tag":              "two_year_recid",
-  "fp":               true,
+  "fp":               false,
   "fn":               true,
   "objective_weight": 1,
   "weight":           {"gt": 0, "lt": 400},
-  "weight_res":       11,
-  "gamma":            {"gt": 0, "lt": 5},
-  "gamma_res":        1,
+  "weight_res":       21,
+  "gamma":            {"gt": 0, "lt": 100},
+  "gamma_res":        11,
   "test_size":        0.3,
   "val_size":         0.50,
   "num_of_folds":     5,
-  "num_of_runs":      3,
+  "num_of_runs":      5,
 
   "filters": [
     {
