@@ -11,11 +11,11 @@
   "weight":           {"gt": 0, "lt": 400},
   "weight_res":       11,
   "gamma":            {"gt": 0, "lt": 5},
-  "gamma_res":        6,
+  "gamma_res":        1,
   "test_size":        0.3,
   "val_size":         0.50,
   "num_of_folds":     5,
-  "num_of_runs":      4,
+  "num_of_runs":      3,
 
   "filters": [
     {

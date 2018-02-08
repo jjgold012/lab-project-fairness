@@ -231,13 +231,15 @@ def solve_convex(problem, run_num):
                     temp_results_abs[gamma_index] = list()
                 gamma = gammas[gamma_index]
                 try:
-                    solution = solve_one_time_by_type(problem, x_train, y_train, x_val, y_val, gamma, weight, is_squared=True)
+                    solution =\
+                        solve_one_time_by_type(problem, x_train, y_train, x_val, y_val, gamma, weight, is_squared=True)
                     temp_results_squared[gamma_index].append(solution['test_real_measures'])
                 except:
                     print('Squared:\tFailed for gamma: ' + str(gamma) + ", weight: " + str(weight))
                     pass
                 try:
-                    solution = solve_one_time_by_type(problem, x_train, y_train, x_val, y_val, gamma, weight, is_squared=False)
+                    solution =\
+                        solve_one_time_by_type(problem, x_train, y_train, x_val, y_val, gamma, weight, is_squared=False)
                     temp_results_abs[gamma_index].append(solution['test_real_measures'])
                 except:
                     print('ABS:\t\tFailed for gamma: ' + str(gamma) + ", weight: " + str(weight))
