@@ -9,13 +9,13 @@
   "fn":               true,
   "objective_weight": 1,
   "weight":           {"gt": 0, "lt": 400},
-  "weight_res":       11,
+  "weight_res":       21,
   "gamma":            {"gt": 0, "lt": 5},
-  "gamma_res":        11,
-  "test_size":        0.3,
+  "gamma_res":        6,
+  "test_size":        0.7,
   "val_size":         0.50,
   "num_of_folds":     3,
-  "num_of_runs":      3,
+  "num_of_runs":      5,
 
   "filters": [
     {

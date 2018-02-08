@@ -259,8 +259,8 @@ def solve_convex(problem, run_num):
 
         argmin_gamma_squared = avg_results_squared[np.array([r['objective'] for r in avg_results_squared]).argmin()]['gamma']
         argmin_gamma_abs = avg_results_squared[np.array([r['objective'] for r in avg_results_abs]).argmin()]['gamma']
-        print("\nSquared:\tthe best gamma for weight: " + str(weight) + " is: " + str(argmin_gamma_squared))
-        print("ABS:\t\tthe best gamma for weight: " + str(weight) + " is: " + str(argmin_gamma_abs))
+        print("Squared:\tthe best gamma for weight: " + str(weight) + " is: " + str(argmin_gamma_squared))
+        print("ABS:\t\tthe best gamma for weight: " + str(weight) + " is: " + str(argmin_gamma_abs) + "\n")
 
         try:
             solution_squared =\

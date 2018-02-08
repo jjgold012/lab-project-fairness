@@ -37,10 +37,10 @@ Or you can create your own option file. Here's an example:
   "weight_res":       21,                                           #The number of weights to test in the range 
   "gamma":            {"gt": 0, "lt": 10},                          #The regularization parameter (gamma) range
   "gamma_res":        11,                                           #The number of gamma to test in the range
-  "test_size":        0.3,
-  "val_size":         0.50,
-  "num_of_folds":     5,
-  "num_of_runs":      5,
+  "test_size":        0.3,                                          #Test size
+  "val_size":         0.50,                                         #Validation size
+  "num_of_folds":     5,                                            #The number of times to run for each weight-gamma combination 
+  "num_of_runs":      5,                                            #The number of times to run the experiment
   
   "filters": [                              #Filters to apply on the data set
     {
