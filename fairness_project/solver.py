@@ -259,6 +259,8 @@ def solve_convex(problem, run_num):
 
         argmin_gamma_squared = avg_results_squared[np.array([r['objective'] for r in avg_results_squared]).argmin()]['gamma']
         argmin_gamma_abs = avg_results_squared[np.array([r['objective'] for r in avg_results_abs]).argmin()]['gamma']
+        print("\nSquared:\tthe best gamma for weight: " + str(weight) + " is: " + str(argmin_gamma_squared))
+        print("ABS:\t\tthe best gamma for weight: " + str(weight) + " is: " + str(argmin_gamma_abs))
 
         try:
             solution_squared =\
@@ -274,8 +276,7 @@ def solve_convex(problem, run_num):
         except:
             print('ABS:\t\tFailed for weight: ' + str(weight))
             pass
-        print("\nSquared:\tthe best gamma for weight: " + str(weight) + " is: " + str(argmin_gamma_squared))
-        print("ABS:\t\tthe best gamma for weight: " + str(weight) + " is: " + str(argmin_gamma_abs))
+
     return results_squared, results_abs
 
 
@@ -287,7 +288,7 @@ def solve_problem_for_fairness(problem, synthetic=False):
     measures_baseline = list()
     for run in range(problem.num_of_runs):
         results_squared, results_abs = solve_convex(problem=problem, run_num=run)
-        results_baseline = results_squared[0]
+        results_baseline = results_abs[0]
 
         best_train_squared = results_squared[np.array([r['train_real_measures']['objective'] for r in results_squared]).argmin()]
         best_train_abs = results_abs[np.array([r['train_real_measures']['objective'] for r in results_abs]).argmin()]
