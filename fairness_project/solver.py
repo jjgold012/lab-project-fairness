@@ -196,17 +196,17 @@ def solve_one_time_by_type(problem, x_train, y_train, x_test, y_test, gamma, wei
         'fpr_diff': fpr_diff.value,
         'objective': -log_likelihood.value + fn_weight*fnr_diff.value + fp_weight*fpr_diff.value
     }
-    measures_objective_train = measure_objective_results(x_train, y_train, solution['w'], problem)
-    measure_relaxed_test = measure_relaxed_results(x_test, y_test, solution['w'], weight, problem, is_squared=is_squared)
-    measures_objective_test = measure_objective_results(x_test, y_test, solution['w'], problem)
+    train_real_measures = measure_objective_results(x_train, y_train, solution['w'], problem)
+    test_relaxed_measures = measure_relaxed_results(x_test, y_test, solution['w'], weight, problem, is_squared=is_squared)
+    test_real_measures = measure_objective_results(x_test, y_test, solution['w'], problem)
 
     return {
         'weight': weight,
         'gamma': gamma,
         'train_relaxed_measures': solution,
-        'train_real_measures': measures_objective_train,
-        'test_relaxed_measures': measure_relaxed_test,
-        'test_real_measures': measures_objective_test
+        'train_real_measures': train_real_measures,
+        'test_relaxed_measures': test_relaxed_measures,
+        'test_real_measures': test_real_measures
     }
 
 
