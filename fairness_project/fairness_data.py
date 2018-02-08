@@ -90,7 +90,11 @@ def measures(y, y_hat):
     pos = np.sum(y)
     neg = np.sum(_1 - y)
 
-    return {'fpr': fp/neg, 'fnr': fn/pos, 'tpr': tp/pos, 'tnr': tn/neg, 'acc': (tn + tp)/y.shape[0]}
+    return {'fpr': (fp/neg).item(),
+            'fnr': (fn/pos).item(),
+            'tpr': (tp/pos).item(),
+            'tnr': (tn/neg).item(),
+            'acc': ((tn + tp)/y.shape[0]).item()}
 
 
 def create_synthetic_problem(epsilon=0.125):
@@ -116,6 +120,7 @@ def create_synthetic_problem(epsilon=0.125):
         x=x,
         y=y,
         protected_index=0,
+        num_of_runs=1,
         original_options=description
     )
 

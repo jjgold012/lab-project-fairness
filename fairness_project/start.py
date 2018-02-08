@@ -115,7 +115,7 @@ def main(options):
         problem = create_synthetic_problem(epsilon)
         synthetic = True
 
-    solve.fairness(problem, synthetic)
+    solve.solve_problem_for_fairness(problem, synthetic)
 
 if __name__ == "__main__":
     main(sys.argv[1])
