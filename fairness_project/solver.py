@@ -1,3 +1,4 @@
+import os
 import cvxpy as cp
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,7 +7,13 @@ from sklearn.model_selection import train_test_split
 from fairness_data import *
 
 
-def plot_theta(x, results, _type):
+def make_output_dir(dir_name):
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+
+
+def plot_theta(problem, results, _type):
+    x = problem.X
     num_of_results = min([len(results), 4])
     fig = plt.figure(figsize=(3.6*num_of_results, 3.5))
     fig.subplots_adjust(wspace=0.5, bottom=0.25, left=0.1, right=0.95)
@@ -26,11 +33,14 @@ def plot_theta(x, results, _type):
         sub.fill_between(xp, yp, 1.5, interpolate=True, color='blue', alpha='0.5')
         sub.fill_between(xp, -0.5, yp, interpolate=True, color='red', alpha='0.5')
         sub.plot(x[:, 0], x[:, 1], 'o', color='black')
+    dir_name = os.path.dirname(__file__) + '/../results/all/' + problem.description
+    make_output_dir(dir_name)
+    fig.savefig(dir_name + '/' + _type)
 
 
-def show_theta(x, results_squared, results_abs):
-    plot_theta(x, results_squared, _type='Squared')
-    plot_theta(x, results_abs, _type='ABS')
+def show_theta(problem, results_squared, results_abs):
+    plot_theta(problem, results_squared, _type='Squared')
+    plot_theta(problem, results_abs, _type='ABS')
 
 
 def plot_results(subplot, results, _type):
@@ -71,7 +81,7 @@ def show_summary(measures_squared, measures_abs, measures_baseline):
         print('Average ' + key + ' for Squared is: ' + str(np.average(squared_all)))
 
 
-def show_results(results_squared, results_abs, best_for_squared, best_for_abs):
+def show_results(results_squared, results_abs, best_for_squared, best_for_abs, problem, run_num):
     fig = plt.figure(figsize=(10, 5))
     fig.subplots_adjust(top=0.9, bottom=0.25, left=0.1, right=0.9, hspace=0.2, wspace=0.25)
 
@@ -94,15 +104,18 @@ def show_results(results_squared, results_abs, best_for_squared, best_for_abs):
     pprint(best_for_squared)
 
     print('----------------------------------------------------------------------------------\n')
+    dir_name = os.path.dirname(__file__) + '/../results/all/' + problem.description
+    make_output_dir(dir_name)
+    fig.savefig(dir_name + '/' + str(run_num + 1))
 
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 
-def measure_objective_results(x_test, y_test, w, problem):
+def measure_objective_results(x_test, y_test, w, weight,  problem):
     protected_index = problem.protected_index
-    objective_weight = problem.objective_weight
+    objective_weight = 0 if (weight < 0.001) else problem.objective_weight
     fp = problem.fp
     fn = problem.fn
     y_hat = np.round(sigmoid(np.dot(x_test, w)))
@@ -195,9 +208,9 @@ def solve_one_time_by_type(problem, x_train, y_train, x_test, y_test, gamma, wei
         'fpr_diff': fpr_diff.value,
         'objective': -log_likelihood.value + fn_weight*fnr_diff.value + fp_weight*fpr_diff.value
     }
-    train_real_measures = measure_objective_results(x_train, y_train, solution['w'], problem)
+    train_real_measures = measure_objective_results(x_train, y_train, solution['w'], weight, problem)
     test_relaxed_measures = measure_relaxed_results(x_test, y_test, solution['w'], weight, problem, is_squared=is_squared)
-    test_real_measures = measure_objective_results(x_test, y_test, solution['w'], problem)
+    test_real_measures = measure_objective_results(x_test, y_test, solution['w'], weight, problem)
 
     return {
         'weight': weight,
@@ -307,11 +320,11 @@ def solve_problem_for_fairness(problem, synthetic=False):
             'fpr_diff': results_baseline['test_real_measures']['fpr_diff'],
             'fnr_diff': results_baseline['test_real_measures']['fnr_diff']})
 
-        show_results(results_squared, results_abs, best_train_squared, best_train_abs)
+        show_results(results_squared, results_abs, best_train_squared, best_train_abs, problem, run)
         if synthetic:
-            show_theta(problem.X, results_squared, results_abs)
+            show_theta(problem, results_squared, results_abs)
 
     show_summary(measures_squared, measures_abs, measures_baseline)
     print('\n----------------------------------DONE--------------------------------------\n')
-    plt.show()
+    # plt.show()
 

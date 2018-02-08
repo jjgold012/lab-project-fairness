@@ -1,11 +1,11 @@
 {
-  "description":      "compas_weight_0-400_gamma_0-100",
+  "description":      "compas_fn_weight_0-400_gamma_0-100",
   "data_set":         "compas-dataset",
   "file":             "compas-scores-two-years.csv",
   "data_headers":     "age,sex,race,priors_count,c_charge_degree",
   "protected":        "race",
   "tag":              "two_year_recid",
-  "fp":               true,
+  "fp":               false,
   "fn":               true,
   "objective_weight": 1,
   "weight":           {"gt": 0, "lt": 400},

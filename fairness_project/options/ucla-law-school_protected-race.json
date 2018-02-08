@@ -1,5 +1,5 @@
 {
-  "description":      "ucla law school dataset with protected value sex",
+  "description":      "ucla_lawschool_race_weight_0-400_gamma_0-5",
   "data_set":         "ucla-law-school-dataset",
   "file":             "lsac.csv",
   "data_headers":     "decile1b,decile3,decile1,sex,race,cluster,lsat,ugpa,zfygpa,dob_yr,grad,zgpa,fulltime,fam_inc,parttime,tier,indxgrp2",

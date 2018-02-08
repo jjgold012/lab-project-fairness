@@ -114,7 +114,7 @@ def create_synthetic_problem(epsilon=0.125):
 
         y.append(new_y)
         x.append(new_x)
-    description = "synthetic data with epsilon: " + str(epsilon)
+    description = 'synthetic_data_with_epsilon_' + str(epsilon)
     return FairnessProblem(
         description=description,
         x=x,
