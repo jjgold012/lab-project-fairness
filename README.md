@@ -8,11 +8,6 @@ Run:
 pip install -r requirements.txt
 ```
 
-## old_project
-In order to run the old project run:
-```
-python old_project/fairness.py
-```
 
 ## fairness_project
 In order to run this project with on one of the data sets in the folder ```fairness_project/datasets/``` choose an option
