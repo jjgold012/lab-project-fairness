@@ -85,6 +85,6 @@ The synthetic data is generated like this
 ### Results
 The outputs results can be seen in the ```results``` folder.
 
-** _The ```default, adult, ucla-law-school``` data sets result are with train set size of 20% because the data set is quite large and it ran for a long time._
+** _The ```default, adult, ucla-law-school``` data sets result are with train set size of 30% because the data set is quite large and it ran for a long time._
 
 
