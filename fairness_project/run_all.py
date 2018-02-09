@@ -4,7 +4,7 @@ import subprocess
 
 start_path = os.path.dirname(__file__) + '/start.py'
 
-dir_name = os.path.dirname(__file__)  + '/../results/all/synthetic_data_with_epsilon_0.1'
+dir_name = os.path.dirname(__file__) + '/../results/all/synthetic_data_with_epsilon_0.1'
 if not os.path.exists(dir_name):
     os.makedirs(dir_name)
 out_file = dir_name + '/' + 'synthetic_data_with_epsilon_0.1.out'

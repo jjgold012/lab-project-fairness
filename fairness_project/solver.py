@@ -113,9 +113,9 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 
-def measure_objective_results(x_test, y_test, w, weight,  problem):
+def measure_objective_results(x_test, y_test, w,  problem):
     protected_index = problem.protected_index
-    objective_weight = 0 if (weight < 0.001) else problem.objective_weight
+    objective_weight = problem.objective_weight
     fp = problem.fp
     fn = problem.fn
     y_hat = np.round(sigmoid(np.dot(x_test, w)))
@@ -208,9 +208,9 @@ def solve_one_time_by_type(problem, x_train, y_train, x_test, y_test, gamma, wei
         'fpr_diff': fpr_diff.value,
         'objective': -log_likelihood.value + fn_weight*fnr_diff.value + fp_weight*fpr_diff.value
     }
-    train_real_measures = measure_objective_results(x_train, y_train, solution['w'], weight, problem)
+    train_real_measures = measure_objective_results(x_train, y_train, solution['w'], problem)
     test_relaxed_measures = measure_relaxed_results(x_test, y_test, solution['w'], weight, problem, is_squared=is_squared)
-    test_real_measures = measure_objective_results(x_test, y_test, solution['w'], weight, problem)
+    test_real_measures = measure_objective_results(x_test, y_test, solution['w'], problem)
 
     return {
         'weight': weight,
@@ -245,14 +245,18 @@ def solve_convex(problem, run_num):
                 try:
                     solution =\
                         solve_one_time_by_type(problem, x_train, y_train, x_val, y_val, gamma, weight, is_squared=True)
-                    temp_results_squared[gamma_index].append(solution['test_real_measures'])
+                    temp_results_squared[gamma_index].append(
+                        solution['test_real_measures'] if (weight >= 0.001) else solution['test_relaxed_measures']
+                    )
                 except:
                     print('Squared:\tFailed for gamma: ' + str(gamma) + ", weight: " + str(weight) + '\n')
                     pass
                 try:
                     solution =\
                         solve_one_time_by_type(problem, x_train, y_train, x_val, y_val, gamma, weight, is_squared=False)
-                    temp_results_abs[gamma_index].append(solution['test_real_measures'])
+                    temp_results_abs[gamma_index].append(
+                        solution['test_real_measures'] if (weight >= 0.001) else solution['test_relaxed_measures']
+                    )
                 except:
                     print('ABS:\t\tFailed for gamma: ' + str(gamma) + ", weight: " + str(weight) + '\n')
                     pass
