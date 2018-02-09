@@ -33,7 +33,8 @@ def plot_theta(problem, results, _type):
         sub.fill_between(xp, yp, 1.5, interpolate=True, color='blue', alpha='0.5')
         sub.fill_between(xp, -0.5, yp, interpolate=True, color='red', alpha='0.5')
         sub.plot(x[:, 0], x[:, 1], 'o', color='black')
-    dir_name = os.path.dirname(__file__) + '/../results/all/' + problem.description
+
+    dir_name = os.path.dirname(__file__) + '/../results/' + problem.description
     make_output_dir(dir_name)
     fig.savefig(dir_name + '/' + _type)
 
@@ -104,7 +105,8 @@ def show_results(results_squared, results_abs, best_for_squared, best_for_abs, p
     pprint(best_for_squared)
 
     print('----------------------------------------------------------------------------------\n')
-    dir_name = os.path.dirname(__file__) + '/../results/all/' + problem.description
+
+    dir_name = os.path.dirname(__file__) + '/../results/' + problem.description
     make_output_dir(dir_name)
     fig.savefig(dir_name + '/' + str(run_num + 1))
 
