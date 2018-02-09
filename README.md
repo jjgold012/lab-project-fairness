@@ -1,6 +1,5 @@
 # lab-project-fairness
 
-For more details look at [Project.pdf](https://github.cs.huji.ac.il/jjgold/lab-project-fairness/blob/master/Project.pdf) and [here](https://arxiv.org/pdf/1707.00044.pdf)
 
 ## Requirements
 Run:
