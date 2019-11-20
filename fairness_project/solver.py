@@ -187,7 +187,7 @@ def solve_one_time_by_type(problem, x_train, y_train, x_test, y_test, gamma, wei
 
     diff_pos = (np.sum(x_1_pos, axis=0)/x_1_pos.shape[0]) - (np.sum(x_0_pos, axis=0)/x_0_pos.shape[0])
     diff_neg = (np.sum(x_1_neg, axis=0)/x_1_neg.shape[0]) - (np.sum(x_0_neg, axis=0)/x_0_neg.shape[0])
-    log_likelihood = (y_train.T * (x_train * w) - cp.sum_entries(cp.logistic(x_train * w)))
+    log_likelihood = (y_train.T * (x_train * w) - cp.sum(cp.logistic(x_train * w)))
     if is_squared:
         fpr_diff = cp.square(diff_neg*w)
         fnr_diff = cp.square(diff_pos*w)
@@ -250,7 +250,8 @@ def solve_convex(problem, run_num):
                     temp_results_squared[gamma_index].append(
                         solution['test_real_measures'] if (weight >= 0.001) else solution['test_relaxed_measures']
                     )
-                except:
+                except Exception as e:
+                    print(str(e))
                     print('Squared:\tFailed for gamma: ' + str(gamma) + ", weight: " + str(weight) + '\n')
                     pass
                 try:
@@ -259,7 +260,8 @@ def solve_convex(problem, run_num):
                     temp_results_abs[gamma_index].append(
                         solution['test_real_measures'] if (weight >= 0.001) else solution['test_relaxed_measures']
                     )
-                except:
+                except Exception as e:
+                    print(str(e))
                     print('ABS:\t\tFailed for gamma: ' + str(gamma) + ", weight: " + str(weight) + '\n')
                     pass
 
@@ -284,14 +286,16 @@ def solve_convex(problem, run_num):
             solution_squared =\
                 solve_one_time_by_type(problem, x_train_all, y_train_all, x_test, y_test, argmin_gamma_squared, weight, is_squared=True)
             results_squared.append(solution_squared)
-        except:
+        except Exception as e:
+            print(str(e))
             print('Squared:\tFailed for weight: ' + str(weight) + '\n')
             pass
         try:
             solution_abs =\
                 solve_one_time_by_type(problem, x_train_all, y_train_all, x_test, y_test, argmin_gamma_abs, weight, is_squared=False)
             results_abs.append(solution_abs)
-        except:
+        except Exception as e:
+            print(str(e))
             print('ABS:\t\tFailed for weight: ' + str(weight) + '\n')
             pass
 
